@@ -15,7 +15,7 @@
 <meta property="og:description" content="Hint on paraFoam compile from Third-party folder in OpenFOAM-7 on Ubuntu 20.04">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-10-18T22:00:00.000Z">
-<meta property="article:modified_time" content="2020-10-22T10:19:48.022Z">
+<meta property="article:modified_time" content="2020-10-22T11:56:35.098Z">
 <meta property="article:author" content="Boyao Wang">
 <meta property="article:tag" content="OpenFOAM">
 <meta property="article:tag" content="paraFoam">
@@ -209,7 +209,7 @@ mjx-container[display="true"] + br {
       
         <p>Hint on paraFoam compile from Third-party folder in OpenFOAM-7 on Ubuntu 20.04 <a id="more"></a></p>
 <p>There are some package needed before compile the <code>paraFoam</code>. The commands are shown below:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install qt5-default</span><br><span class="line">sudo apt-get install libqt5x11extras5-dev</span><br><span class="line">sudo apt-get install qttools5-dev</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install qt5-default</span><br><span class="line">sudo apt-get install libqt5x11extras5-dev</span><br><span class="line">sudo apt-get install qttools5-dev</span><br><span class="line">sudo apt-get install libxt-dev </span><br></pre></td></tr></table></figure>
 
 <p>Actually, those packages may also not enough. Therefore, here we introduce a new method for searching those command. This package is called <code>apt-file</code>. When you called e.g.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-file search Qt5HelpConfig.cmake</span><br></pre></td></tr></table></figure>
