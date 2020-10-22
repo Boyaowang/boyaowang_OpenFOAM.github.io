@@ -5,14 +5,20 @@
   
 
   
-  <title>Archives: 2020 | Boyao OpenFOAM notes</title>
+  <title>paraFoam compilation | Boyao OpenFOAM notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Boyao OpenFOAM notes">
-<meta property="og:url" content="http://example.com/boyaowang_OpenFOAM.github.io/archives/2020/index.html">
+  <meta name="description" content="Hint on paraFoam compile from Third-party folder in OpenFOAM-7 on Ubuntu 20.04">
+<meta property="og:type" content="article">
+<meta property="og:title" content="paraFoam compilation">
+<meta property="og:url" content="http://example.com/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/index.html">
 <meta property="og:site_name" content="Boyao OpenFOAM notes">
+<meta property="og:description" content="Hint on paraFoam compile from Third-party folder in OpenFOAM-7 on Ubuntu 20.04">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-18T22:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-22T10:19:48.022Z">
 <meta property="article:author" content="Boyao Wang">
+<meta property="article:tag" content="OpenFOAM">
+<meta property="article:tag" content="paraFoam">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="Boyao OpenFOAM notes" type="application/atom+xml">
@@ -179,173 +185,74 @@ mjx-container[display="true"] + br {
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/boyaowang_OpenFOAM.github.io/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/" class="archive-article-date">
-  <time datetime="2020-10-21T22:00:00.000Z" itemprop="datePublished">Oct 22</time>
+        <section id="main"><article id="post-paraFOAM_compile" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/" class="article-date">
+  <time datetime="2020-10-18T22:00:00.000Z" itemprop="datePublished">2020-10-19</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/">Salome problems</a>
+    <h1 class="article-title" itemprop="name">
+      paraFoam compilation
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/" class="archive-article-date">
-  <time datetime="2020-10-18T22:00:00.000Z" itemprop="datePublished">Oct 19</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/">Salome problems</a>
-    </h1>
-  
+        <p>Hint on paraFoam compile from Third-party folder in OpenFOAM-7 on Ubuntu 20.04 <a id="more"></a></p>
+<p>There are some package needed before compile the <code>paraFoam</code>. The commands are shown below:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install qt5-default</span><br><span class="line">sudo apt-get install libqt5x11extras5-dev</span><br><span class="line">sudo apt-get install qttools5-dev</span><br></pre></td></tr></table></figure>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/" class="archive-article-date">
-  <time datetime="2020-10-18T22:00:00.000Z" itemprop="datePublished">Oct 19</time>
-</a>
+<p>Actually, those packages may also not enough. Therefore, here we introduce a new method for searching those command. This package is called <code>apt-file</code>. When you called e.g.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-file search Qt5HelpConfig.cmake</span><br></pre></td></tr></table></figure>
+
+<p>You will get:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qttools5-dev: &#x2F;usr&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;cmake&#x2F;Qt5Help&#x2F;Qt5HelpConfig.cmake</span><br></pre></td></tr></table></figure>
+
+<p>This will tell you that <code>qttools5-dev</code> needs to be installed if <code>Qt5HelpConfig.cmake</code> is missing.</p>
+<p>After these steps, normally, when you use <code>./makeParaView</code> it will work.</p>
+
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/">paraFoam compilation</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/" class="archive-article-date">
-  <time datetime="2020-09-29T22:00:00.000Z" itemprop="datePublished">Sep 30</time>
-</a>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/" data-id="ckgkq3kfy0003ftu2f3vc60a9" class="article-share-link">Share</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/">fvDOM Model</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/09/16/P1_model/" class="archive-article-date">
-  <time datetime="2020-09-15T22:00:00.000Z" itemprop="datePublished">Sep 16</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/16/P1_model/">P1 Model</a>
-    </h1>
-  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" rel="tag">paraFoam</a></li></ul>
 
-    </header>
+    </footer>
   </div>
-</article>
   
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/09/15/IOobject_class/" class="archive-article-date">
-  <time datetime="2020-09-14T22:00:00.000Z" itemprop="datePublished">Sep 15</time>
-</a>
-      
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/15/IOobject_class/">IOobject class</a>
-    </h1>
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Salome problems
+        
+      </div>
+    </a>
   
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">fvDOM Model</div>
+    </a>
+  
+</nav>
 
-    </header>
-  </div>
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/09/15/vol*Field/" class="archive-article-date">
-  <time datetime="2020-09-14T22:00:00.000Z" itemprop="datePublished">Sep 15</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/15/vol*Field/">volscalarField</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/09/14/dictionary_OpenFOAM/" class="archive-article-date">
-  <time datetime="2020-09-13T22:00:00.000Z" itemprop="datePublished">Sep 14</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/14/dictionary_OpenFOAM/">A liitle bit about how to use dictionary in openFOAM</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
 
 </section>
         
