@@ -5,14 +5,20 @@
   
 
   
-  <title>Tag: fvDOM | Boyao OpenFOAM notes</title>
+  <title>fvScalarMatrix in OpenFOAM | Boyao OpenFOAM notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Boyao OpenFOAM notes">
-<meta property="og:url" content="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/tags/fvDOM/index.html">
+  <meta name="description" content="What is the fvScalarMatrix.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fvScalarMatrix in OpenFOAM">
+<meta property="og:url" content="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/index.html">
 <meta property="og:site_name" content="Boyao OpenFOAM notes">
+<meta property="og:description" content="What is the fvScalarMatrix.">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-24T22:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-26T21:06:05.861Z">
 <meta property="article:author" content="Boyao Wang">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="OpenFOAM">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="Boyao OpenFOAM notes" type="application/atom+xml">
@@ -179,40 +185,67 @@ mjx-container[display="true"] + br {
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/boyaowang_OpenFOAM.github.io/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/" class="archive-article-date">
-  <time datetime="2020-09-29T22:00:00.000Z" itemprop="datePublished">Sep 30</time>
+        <section id="main"><article id="post-fvScalarMatrix" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/" class="article-date">
+  <time datetime="2020-10-24T22:00:00.000Z" itemprop="datePublished">2020-10-25</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/">fvDOM Model</a>
+    <h1 class="article-title" itemprop="name">
+      fvScalarMatrix in OpenFOAM
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>What is the fvScalarMatrix.  <a id="more"></a></p>
+<p>It is defined in <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v7/fvMatricesFwd_8H.html"><code>fvMatricesFwd.H</code></a>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Foam</span><br><span class="line">{</span><br><span class="line"></span><br><span class="line"><span class="comment">// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Type</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">fvMatrix</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> fvMatrix&lt;scalar&gt; fvScalarMatrix;</span><br><span class="line"><span class="keyword">typedef</span> fvMatrix&lt;<span class="built_in">vector</span>&gt; fvVectorMatrix;</span><br><span class="line"><span class="keyword">typedef</span> fvMatrix&lt;sphericalTensor&gt; fvSphericalTensorMatrix;</span><br><span class="line"><span class="keyword">typedef</span> fvMatrix&lt;symmTensor&gt; fvSymmTensorMatrix;</span><br><span class="line"><span class="keyword">typedef</span> fvMatrix&lt;tensor&gt; fvTensorMatrix;</span><br><span class="line"></span><br><span class="line"><span class="comment">// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //</span></span><br><span class="line"></span><br><span class="line">} <span class="comment">// End namespace Foam</span></span><br></pre></td></tr></table></figure>
 
+<p>Here we can see that <code>fvScalarMatrix</code> actually has a type of <code>fvMatrix</code> with a specified type <code>scalar</code>. So we have to go to class <code>fvMatrix</code> to see its definition.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/" data-id="ckgr14vhm00033uu25inca6ez" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          fvm::laplacian in OpenFOAM
+        
+      </div>
+    </a>
+  
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">volMesh class in OpenFOAM</div>
+    </a>
+  
+</nav>
+
+  
+</article>
 
 </section>
         

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>sloverPerformance in OpenFOAM | Boyao OpenFOAM notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="How solverPerformance work in OpenFOAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sloverPerformance in OpenFOAM">
+<meta property="og:url" content="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/index.html">
+<meta property="og:site_name" content="Boyao OpenFOAM notes">
+<meta property="og:description" content="How solverPerformance work in OpenFOAM">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-22T22:00:00.000Z">
+<meta property="article:modified_time" content="2020-10-26T21:04:04.378Z">
+<meta property="article:author" content="Boyao Wang">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="OpenFOAM">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="Boyao OpenFOAM notes" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/boyaowang_OpenFOAM.github.io/" id="logo">Boyao OpenFOAM notes</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/">Home</a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-solverperformance" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/" class="article-date">
+  <time datetime="2020-10-22T22:00:00.000Z" itemprop="datePublished">2020-10-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      sloverPerformance in OpenFOAM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>How solverPerformance work in OpenFOAM <a id="more"></a></p>
+<p>The research on how solverPerformance works in OpenFOAM comes from how the <code>Iteration</code> and <code>residual</code> are calculated in OpenFOAM. The results that we always see in the command window e.g.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DICPCG:  Solving for S, Initial residual = 0.0705455, Final residual = 9.09192e-15, No Iterations 4</span><br><span class="line">ExecutionTime = 0.01 s  ClockTime = 0 s</span><br></pre></td></tr></table></figure>
+
+<p> Showing this line calls the <code>print()</code> function in <code>SolverPerformance.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Type</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">Foam</span>:</span>:SolverPerformance&lt;Type&gt;::print</span><br><span class="line">(</span><br><span class="line">    Ostream&amp; os</span><br><span class="line">) <span class="keyword">const</span></span><br><span class="line">{</span><br><span class="line">    <span class="keyword">for</span>(direction cmpt=<span class="number">0</span>; cmpt&lt;pTraits&lt;Type&gt;::nComponents; cmpt++)</span><br><span class="line">    {</span><br><span class="line">        <span class="keyword">if</span> (pTraits&lt;Type&gt;::nComponents == <span class="number">1</span>)</span><br><span class="line">        {</span><br><span class="line">            os  &lt;&lt; solverName_ &lt;&lt; <span class="string">":  Solving for "</span> &lt;&lt; fieldName_;</span><br><span class="line"></span><br><span class="line">        }</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (singular_[cmpt])</span><br><span class="line">...</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        {</span><br><span class="line">            os  &lt;&lt; <span class="string">", Initial residual = "</span> &lt;&lt; component(initialResidual_, cmpt)</span><br><span class="line">                &lt;&lt; <span class="string">", Final residualhah = "</span> &lt;&lt; component(finalResidual_, cmpt)</span><br><span class="line">                &lt;&lt; <span class="string">", No Iterations "</span> &lt;&lt; nIterations_</span><br><span class="line">                &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>We will start the research by digging into a very simple solver called <code>laplacianFoam</code>. In <code>laplacianFoam</code>, the following code will solve the equation:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (simple.correctNonOrthogonal())</span><br><span class="line">{</span><br><span class="line">    fvScalarMatrix TEqn</span><br><span class="line">    (</span><br><span class="line">        fvm::ddt(T) - fvm::laplacian(DT, T)</span><br><span class="line">     ==</span><br><span class="line">        fvOptions(T)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    fvOptions.constrain(TEqn);</span><br><span class="line">    TEqn.solve();</span><br><span class="line">    fvOptions.correct(T);</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>where the equation is:</p>
+<p><mjx-container class="MathJax" jax="SVG" display="true" width="full" style="min-width: 26.449ex"><svg style="vertical-align: -1.809ex; min-width: 26.449ex" xmlns="http://www.w3.org/2000/svg" width="100%" height="4.749ex" role="img" focusable="false"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0) scale(0.0181) translate(0, -1299.5)"><g data-mml-node="math"><g data-mml-node="mtable" transform="translate(2078, 0) translate(-2078, 0)"><g transform="translate(0 1299.5) matrix(1 0 0 -1 0 0) scale(55.25)"><svg data-table="true" preserveaspectratio="xMidYMid" viewbox="3767.3 -1299.5 1 2099"><g transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="mlabeledtr" transform="translate(0, -91.5)"><g data-mml-node="mtd"><g data-mml-node="mfrac"><g data-mml-node="mrow" transform="translate(220, 676)"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"/></g><g data-mml-node="mi" transform="translate(566, 0)"><path data-c="1D447" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"/></g></g><g data-mml-node="mrow" transform="translate(391.5, -686)"><g data-mml-node="mi"><path data-c="1D715" d="M202 508Q179 508 169 520T158 547Q158 557 164 577T185 624T230 675T301 710L333 715H345Q378 715 384 714Q447 703 489 661T549 568T566 457Q566 362 519 240T402 53Q321 -22 223 -22Q123 -22 73 56Q42 102 42 148V159Q42 276 129 370T322 465Q383 465 414 434T455 367L458 378Q478 461 478 515Q478 603 437 639T344 676Q266 676 223 612Q264 606 264 572Q264 547 246 528T202 508ZM430 306Q430 372 401 400T333 428Q270 428 222 382Q197 354 183 323T150 221Q132 149 132 116Q132 21 232 21Q244 21 250 22Q327 35 374 112Q389 137 409 196T430 306Z"/></g><g data-mml-node="mi" transform="translate(566, 0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g></g><rect width="1470" height="60" x="120" y="220"/></g><g data-mml-node="mo" transform="translate(1932.2, 0)"><path data-c="2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"/></g><g data-mml-node="mi" transform="translate(2932.4, 0)"><path data-c="1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"/></g><g data-mml-node="msup" transform="translate(3760.4, 0)"><g data-mml-node="mi"><path data-c="2207" d="M46 676Q46 679 51 683H781Q786 679 786 676Q786 674 617 326T444 -26Q439 -33 416 -33T388 -26Q385 -22 216 326T46 676ZM697 596Q697 597 445 597T193 596Q195 591 319 336T445 80L697 596Z"/></g><g data-mml-node="mn" transform="translate(833, 413) scale(0.707)"><path data-c="32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"/></g></g><g data-mml-node="mi" transform="translate(4997, 0)"><path data-c="1D447" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"/></g><g data-mml-node="mo" transform="translate(5978.8, 0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"/></g><g data-mml-node="mn" transform="translate(7034.6, 0)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"/></g></g></g></g></svg><svg data-labels="true" preserveaspectratio="xMaxYMid" viewbox="1278 -1299.5 1 2099"><g data-labels="true" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="mtd" id="mjx-eqn-dom_ansys" transform="translate(0, -91.5)"><g data-mml-node="mtext"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"/><path data-c="31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" transform="translate(389, 0)"/><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" transform="translate(889, 0)"/></g></g></g></svg></g></g></g></g></svg></mjx-container></p>
+<p>to be continued….</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/" data-id="ckgo7am6400005hu2hhlh19oq" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          fvm::ddtScheme in OpenFOAM
+        
+      </div>
+    </a>
+  
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">foamNew command</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" rel="tag">OpenFOAM command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/Salome/" rel="tag">Salome</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" rel="tag">fvDOM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" rel="tag">paraFoam</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/boyaowang_OpenFOAM.github.io/tags/C/" style="font-size: 15px;">C++</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" style="font-size: 20px;">OpenFOAM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" style="font-size: 10px;">OpenFOAM command</a> <a href="/boyaowang_OpenFOAM.github.io/tags/Salome/" style="font-size: 10px;">Salome</a> <a href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" style="font-size: 10px;">fvDOM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" style="font-size: 10px;">paraFoam</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/">A littel discuss about fvMatrix fvMesh lduMatrix lduMesh in OpenFOAM</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/">fvm::laplacian in OpenFOAM</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/">fvScalarMatrix in OpenFOAM</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/">volMesh class in OpenFOAM</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/">fvm::ddtScheme in OpenFOAM</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Boyao Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/" class="mobile-nav-link">Home</a>
+  
+    <a href="/boyaowang_OpenFOAM.github.io/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.css">
+
+  
+<script src="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/boyaowang_OpenFOAM.github.io/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
