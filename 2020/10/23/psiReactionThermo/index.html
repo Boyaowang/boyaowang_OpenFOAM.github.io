@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>psiReactionThermo class in OpenFOAM | Boyao OpenFOAM notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="The psiReactionThermo class in OpenFOAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="psiReactionThermo class in OpenFOAM">
+<meta property="og:url" content="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/psiReactionThermo/index.html">
+<meta property="og:site_name" content="Boyao OpenFOAM notes">
+<meta property="og:description" content="The psiReactionThermo class in OpenFOAM">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-22T22:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-22T10:49:39.000Z">
+<meta property="article:author" content="Boyao Wang">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="OpenFOAM">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="Boyao OpenFOAM notes" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/boyaowang_OpenFOAM.github.io/" id="logo">Boyao OpenFOAM notes</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/">Home</a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-psiReactionThermo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/psiReactionThermo/" class="article-date">
+  <time datetime="2020-10-22T22:00:00.000Z" itemprop="datePublished">2020-10-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      psiReactionThermo class in OpenFOAM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>The psiReactionThermo class in OpenFOAM <a id="more"></a></p>
+<p>In the <code>createFieds.H</code> in <code>coalChemistryFoam</code> solver, a <code>psiReactionThermo</code> object is defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">autoPtr&lt;psiReactionThermo&gt; <span class="title">pThermo</span><span class="params">(psiReactionThermo::New(mesh))</span></span>;</span><br><span class="line">psiReactionThermo&amp; thermo = pThermo();</span><br></pre></td></tr></table></figure>
+
+<p>The object <code>pThermo</code> is initialized using the <code>New</code> function defined in <code>psiReactionThermo.C</code> as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Foam::autoPtr&lt;Foam::psiReactionThermo&gt; Foam::psiReactionThermo::New</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> fvMesh&amp; mesh,</span><br><span class="line">    <span class="keyword">const</span> word&amp; phaseName</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> basicThermo::New&lt;psiReactionThermo&gt;(mesh, phaseName);</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>Here the <code>phaseName</code> is defined as <code>word::null</code>. The return of this <code>New</code> function is defined in <code>basicThermoTemplates.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Thermo</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:autoPtr&lt;Thermo&gt; Foam::basicThermo::New</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> fvMesh&amp; mesh,</span><br><span class="line">    <span class="keyword">const</span> word&amp; phaseName</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    IOdictionary thermoDict</span><br><span class="line">    (</span><br><span class="line">        IOobject</span><br><span class="line">        (</span><br><span class="line">            phasePropertyName(dictName, phaseName),</span><br><span class="line">            mesh.time().constant(),</span><br><span class="line">            mesh,</span><br><span class="line">            IOobject::MUST_READ_IF_MODIFIED,</span><br><span class="line">            IOobject::NO_WRITE,</span><br><span class="line">            <span class="literal">false</span></span><br><span class="line">        )</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">typename</span> Thermo::fvMeshConstructorTable::iterator cstrIter =</span><br><span class="line">        lookupThermo&lt;Thermo, <span class="keyword">typename</span> Thermo::fvMeshConstructorTable&gt;</span><br><span class="line">        (</span><br><span class="line">            thermoDict,</span><br><span class="line">            Thermo::fvMeshConstructorTablePtr_</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> autoPtr&lt;Thermo&gt;(cstrIter()(mesh, phaseName));</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>dictName</code> here is defined in <code>basicThermo.C</code> as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Foam::word Foam::basicThermo::dictName(<span class="string">"thermophysicalProperties"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>The <code>phasePropertyName</code> function is defined in <code>basicThermo.H</code> as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> word phasePropertyName</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp; name,</span><br><span class="line">    <span class="keyword">const</span> word&amp; phaseName</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> IOobject::groupName(name, phaseName);</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>Here in the <code>New</code> function the <code>phasePropertyName</code> will be <code>thermophysicalProperties</code> as the <code>phaseName</code> here is a <code>word::null</code>. The two parameters in <code>New</code> function are all settled, then we can go through the function body. First an <code>IOdictionary</code> object is built called <code>thermoDict</code>. This object will search the file which has a name of <code>phasePropertyName</code> in the <code>constant</code> folder.  Then the <code>cstrIter</code> will be assigned with a function called <code>lookupThermo</code>. The types <code>fvMeshConstructorTable</code> and <code>fvMeshConstructorTablePtr_</code> are all defined in the <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1psiReactionThermo.html#a1124dcfe1c8f85be787675195fc74f3c"><code>declareRunTimeSelectionTable</code></a> in the <code>psiReactionThermo.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">declareRunTimeSelectionTable</span><br><span class="line">(</span><br><span class="line">    autoPtr,</span><br><span class="line">    psiReactionThermo,</span><br><span class="line">    fvMesh,</span><br><span class="line">    (<span class="keyword">const</span> fvMesh&amp; mesh, <span class="keyword">const</span> word&amp; phaseName),</span><br><span class="line">    (mesh, phaseName)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>This is a run time selection macro, we will not explain this in detail here. The function <code>lookupThermo</code> will be called then:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Thermo</span>, <span class="title">class</span> <span class="title">Table</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">typename</span> <span class="title">Table</span>:</span>:iterator Foam::basicThermo::lookupThermo</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; thermoDict,</span><br><span class="line">    Table* tablePtr</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">if</span> (thermoDict.isDict(<span class="string">"thermoType"</span>))</span><br><span class="line">    {</span><br><span class="line">        <span class="function"><span class="keyword">const</span> dictionary&amp; <span class="title">thermoTypeDict</span><span class="params">(thermoDict.subDict(<span class="string">"thermoType"</span>))</span></span>;</span><br><span class="line"></span><br><span class="line">        Info&lt;&lt; <span class="string">"Selecting thermodynamics package "</span> &lt;&lt; thermoTypeDict &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (thermoTypeDict.found(<span class="string">"properties"</span>))</span><br><span class="line">        {</span><br><span class="line">             .........</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        {</span><br><span class="line">            <span class="keyword">const</span> <span class="keyword">int</span> nCmpt = <span class="number">7</span>;</span><br><span class="line">            <span class="keyword">const</span> <span class="keyword">char</span>* cmptNames[nCmpt] =</span><br><span class="line">            {</span><br><span class="line">                <span class="string">"type"</span>,</span><br><span class="line">                <span class="string">"mixture"</span>,</span><br><span class="line">                <span class="string">"transport"</span>,</span><br><span class="line">                <span class="string">"thermo"</span>,</span><br><span class="line">                <span class="string">"equationOfState"</span>,</span><br><span class="line">                <span class="string">"specie"</span>,</span><br><span class="line">                <span class="string">"energy"</span></span><br><span class="line">            };</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Construct the name of the thermo package from the components</span></span><br><span class="line">            <span class="keyword">const</span> word thermoTypeName</span><br><span class="line">            (</span><br><span class="line">                word(thermoTypeDict.lookup(<span class="string">"type"</span>)) + <span class="string">'&lt;'</span></span><br><span class="line">              + word(thermoTypeDict.lookup(<span class="string">"mixture"</span>)) + <span class="string">'&lt;'</span></span><br><span class="line">              + word(thermoTypeDict.lookup(<span class="string">"transport"</span>)) + <span class="string">'&lt;'</span></span><br><span class="line">              + word(thermoTypeDict.lookup(<span class="string">"thermo"</span>)) + <span class="string">'&lt;'</span></span><br><span class="line">              + word(thermoTypeDict.lookup(<span class="string">"equationOfState"</span>)) + <span class="string">'&lt;'</span></span><br><span class="line">              + word(thermoTypeDict.lookup(<span class="string">"specie"</span>)) + <span class="string">"&gt;&gt;,"</span></span><br><span class="line">              + word(thermoTypeDict.lookup(<span class="string">"energy"</span>)) + <span class="string">"&gt;&gt;&gt;"</span></span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> lookupThermo&lt;Thermo, Table&gt;</span><br><span class="line">            (</span><br><span class="line">                thermoTypeDict,</span><br><span class="line">                tablePtr,</span><br><span class="line">                nCmpt,</span><br><span class="line">                cmptNames,</span><br><span class="line">                thermoTypeName</span><br><span class="line">            );</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    {</span><br><span class="line">      ......</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>First it goes into the <code>isDict</code> function, which is used to check if a certain sub-dict is existing or not. The curly bracket <code>{}</code> is necessary for checking if the dict exists or not. If the <code>thermoType</code> sub-dict exists, a new dictionary called <code>thermoTypeDict</code> is built. And the <code>Info</code> will also show this sub-dict. In the tutorial <code>simplifiedSiwek</code>, this <code>thermoTypeDict</code> is:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    type            hePsiThermo;</span><br><span class="line">    mixture         reactingMixture;</span><br><span class="line">    transport       sutherland;</span><br><span class="line">    thermo          janaf;</span><br><span class="line">    energy          sensibleEnthalpy;</span><br><span class="line">    equationOfState perfectGas;</span><br><span class="line">    specie          specie;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>Then we will check if the <code>properties</code> is found in this dictionary. Of course it is not found in this dictionary, therefore the else loop will be conducted. The <code>thermoTypeName</code> in this tutorial is:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hePsiThermo&lt;reactingMixture&lt;sutherland&lt;janaf&lt;perfectGas&lt;specie&gt;&gt;,sensibleEnthalpy&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Then the function will search this <code>thermoTypeName</code> in the table built in the run time selection part. First the function <code>lookupThermo</code> will be called:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Thermo</span>, <span class="title">class</span> <span class="title">Table</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">typename</span> <span class="title">Table</span>:</span>:iterator Foam::basicThermo::lookupThermo</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; thermoTypeDict,</span><br><span class="line">    Table* tablePtr,</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> nCmpt,</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* cmptNames[],</span><br><span class="line">    <span class="keyword">const</span> word&amp; thermoTypeName</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    <span class="comment">// Lookup the thermo package</span></span><br><span class="line">    <span class="keyword">typename</span> Table::iterator cstrIter = tablePtr-&gt;find(thermoTypeName);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Print error message if package not found in the table</span></span><br><span class="line">    <span class="keyword">if</span> (cstrIter == tablePtr-&gt;end())</span><br><span class="line">    {</span><br><span class="line">      ........</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cstrIter;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>In this function, the <code>cstrIter</code> will be initialized from the object <code>tablePtr</code>. Here a initialization flow will be conducted as the inheritance relationship of the <code>psiReactionThermo</code> class. </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/psiReactionThermo/" data-id="ckjzo9rbe00077wu2h1tyhap5" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/SLGThermo/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          SLGThermo class in OpenFOAM
+        
+      </div>
+    </a>
+  
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">fvm::ddtScheme in OpenFOAM</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" rel="tag">OpenFOAM command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/Salome/" rel="tag">Salome</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" rel="tag">fvDOM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" rel="tag">paraFoam</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/boyaowang_OpenFOAM.github.io/tags/C/" style="font-size: 15px;">C++</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" style="font-size: 20px;">OpenFOAM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" style="font-size: 10px;">OpenFOAM command</a> <a href="/boyaowang_OpenFOAM.github.io/tags/Salome/" style="font-size: 10px;">Salome</a> <a href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" style="font-size: 10px;">fvDOM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" style="font-size: 10px;">paraFoam</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 Boyao Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/" class="mobile-nav-link">Home</a>
+  
+    <a href="/boyaowang_OpenFOAM.github.io/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.css">
+
+  
+<script src="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/boyaowang_OpenFOAM.github.io/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

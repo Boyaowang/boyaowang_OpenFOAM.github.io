@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>lookup function in OpenFOAM | Boyao OpenFOAM notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="The lookup function in OpenFOAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lookup function in OpenFOAM">
+<meta property="og:url" content="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/12/21/lookup/index.html">
+<meta property="og:site_name" content="Boyao OpenFOAM notes">
+<meta property="og:description" content="The lookup function in OpenFOAM">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-20T23:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-13T14:34:45.696Z">
+<meta property="article:author" content="Boyao Wang">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="OpenFOAM">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="Boyao OpenFOAM notes" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/boyaowang_OpenFOAM.github.io/" id="logo">Boyao OpenFOAM notes</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/">Home</a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-lookup" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2020/12/21/lookup/" class="article-date">
+  <time datetime="2020-12-20T23:00:00.000Z" itemprop="datePublished">2020-12-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      lookup function in OpenFOAM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>The lookup function in OpenFOAM<a id="more"></a></p>
+<p>The <code>lookup</code> function is defined in <code>dictionary.H</code> and <code>dictionary.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ITstream&amp; lookup</span><br><span class="line">(</span><br><span class="line"> <span class="keyword">const</span> word&amp;,</span><br><span class="line"> <span class="keyword">bool</span> recursive=<span class="literal">false</span>,</span><br><span class="line">    <span class="keyword">bool</span> patternMatch=<span class="literal">true</span></span><br><span class="line">) <span class="keyword">const</span>;</span><br><span class="line"></span><br><span class="line">Foam::ITstream&amp; Foam::dictionary::lookup</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp; keyword,</span><br><span class="line">    <span class="keyword">bool</span> recursive,</span><br><span class="line">    <span class="keyword">bool</span> patternMatch</span><br><span class="line">) <span class="keyword">const</span></span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> lookupEntry(keyword, recursive, patternMatch).stream();</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The return of this function will call:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Foam::entry&amp; Foam::dictionary::lookupEntry</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp; keyword,</span><br><span class="line">    <span class="keyword">bool</span> recursive,</span><br><span class="line">    <span class="keyword">bool</span> patternMatch</span><br><span class="line">) <span class="keyword">const</span></span><br><span class="line">{</span><br><span class="line">    <span class="keyword">const</span> entry* entryPtr = lookupEntryPtr(keyword, recursive, patternMatch);</span><br><span class="line"></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> *entryPtr;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>looupEntry</code> function will call:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Foam::entry* Foam::dictionary::lookupEntryPtr</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp; keyword,</span><br><span class="line">    <span class="keyword">bool</span> recursive, <span class="comment">// false</span></span><br><span class="line">    <span class="keyword">bool</span> patternMatch <span class="comment">// true</span></span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    HashTable&lt;entry*&gt;::iterator iter = hashedEntries_.find(keyword);</span><br><span class="line"></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> iter();</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>hashedEntries_</code> is defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- HashTable of the entries held on the DL-list for quick lookup</span></span><br><span class="line">HashTable&lt;entry*&gt; hashedEntries_;</span><br></pre></td></tr></table></figure>
+
+<p>Here the <code>find</code> function defined in the <code>HashTable</code> is used:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Find and return an iterator set at the hashedEntry</span></span><br><span class="line"><span class="comment">//  If not found iterator = end()</span></span><br><span class="line"><span class="function">iterator <span class="title">find</span><span class="params">(<span class="keyword">const</span> Key&amp;)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>The returned <code>iter()</code> call the <code>operator()</code> of class <code>iterator</code> which is a class defined in <code>HashTable</code> class.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>, <span class="title">class</span> <span class="title">Key</span>, <span class="title">class</span> <span class="title">Hash</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">T</span>&amp;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:HashTable&lt;T, Key, Hash&gt;::iterator::<span class="keyword">operator</span>()()</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>-&gt;object();</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The object function is defined inside the iterator class in <code>HashTableI.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>, <span class="title">class</span> <span class="title">Key</span>, <span class="title">class</span> <span class="title">Hash</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">T</span>&amp;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:HashTable&lt;T, Key, Hash&gt;::iteratorBase::object()</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> entryPtr_-&gt;obj_;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>entryPtr_</code> is an object with a type of <code>hashedEntry*</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Current element</span></span><br><span class="line">hashedEntry* entryPtr_;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>hashedEntry</code> is a struct defined in <code>HashTable</code> class:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hashedEntry</span></span></span><br><span class="line"><span class="class">{</span></span><br><span class="line">    ......</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//- The data object</span></span><br><span class="line">    T obj_;</span><br><span class="line">    </span><br><span class="line">    ......</span><br><span class="line">};</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/12/21/lookup/" data-id="ckjzo9rb900027wu242kxh6ba" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/11/NamedEnum_and_hashTable/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          NamedEnum and HashTable
+        
+      </div>
+    </a>
+  
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/12/21/token/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">token class in OpenFOAM</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" rel="tag">OpenFOAM command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/Salome/" rel="tag">Salome</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" rel="tag">fvDOM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" rel="tag">paraFoam</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/boyaowang_OpenFOAM.github.io/tags/C/" style="font-size: 15px;">C++</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" style="font-size: 20px;">OpenFOAM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" style="font-size: 10px;">OpenFOAM command</a> <a href="/boyaowang_OpenFOAM.github.io/tags/Salome/" style="font-size: 10px;">Salome</a> <a href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" style="font-size: 10px;">fvDOM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" style="font-size: 10px;">paraFoam</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 Boyao Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/" class="mobile-nav-link">Home</a>
+  
+    <a href="/boyaowang_OpenFOAM.github.io/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.css">
+
+  
+<script src="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/boyaowang_OpenFOAM.github.io/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

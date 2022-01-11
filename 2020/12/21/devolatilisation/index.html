@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Devolatilization Model in OpenFOAM | Boyao OpenFOAM notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Devolatilization Model in OpenFOAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Devolatilization Model in OpenFOAM">
+<meta property="og:url" content="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/12/21/devolatilisation/index.html">
+<meta property="og:site_name" content="Boyao OpenFOAM notes">
+<meta property="og:description" content="Devolatilization Model in OpenFOAM">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-20T23:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-21T16:34:46.000Z">
+<meta property="article:author" content="Boyao Wang">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="OpenFOAM">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="Boyao OpenFOAM notes" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/boyaowang_OpenFOAM.github.io/" id="logo">Boyao OpenFOAM notes</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/">Home</a>
+        
+          <a class="main-nav-link" href="/boyaowang_OpenFOAM.github.io/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/boyaowang_OpenFOAM.github.io/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-devolatilisation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2020/12/21/devolatilisation/" class="article-date">
+  <time datetime="2020-12-20T23:00:00.000Z" itemprop="datePublished">2020-12-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Devolatilization Model in OpenFOAM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Devolatilization Model in OpenFOAM <a id="more"></a></p>
+<p>We are going to talk about how the devolatilization model used in OpenFOAM. It is defined in the <code>constant/coalCloudProperties</code>.  E.g. in the tutorial <code>simplifiedSiwek</code>, which has used the <code>coalChemistryFoam</code>. </p>
+<p>First, we find that in  <code>coalChemistryFoam.C</code>, it includes the <code>coalCloud.H</code>. In <code>coalCloud.H</code>, it defines:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> ReactingMultiphaseCloud</span><br><span class="line">&lt;</span><br><span class="line">    ReactingCloud</span><br><span class="line">    &lt;</span><br><span class="line">        ThermoCloud</span><br><span class="line">        &lt;</span><br><span class="line">            KinematicCloud</span><br><span class="line">            &lt;</span><br><span class="line">                Cloud</span><br><span class="line">                &lt;</span><br><span class="line">                    coalParcel</span><br><span class="line">                &gt;</span><br><span class="line">            &gt;</span><br><span class="line">        &gt;</span><br><span class="line">    &gt;</span><br><span class="line">&gt; coalCloud;</span><br></pre></td></tr></table></figure>
+
+<p>which is a highly inherited template (see <a target="_blank" rel="noopener" href="https://blog.feabhas.com/2014/06/template-inheritance/">template inheritance</a>). The inner most class inside the angle brackets is called <code>coalParcel</code> which is defined in <code>coalParcel.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> ReactingMultiphaseParcel</span><br><span class="line">&lt;</span><br><span class="line">    ReactingParcel</span><br><span class="line">    &lt;</span><br><span class="line">        ThermoParcel</span><br><span class="line">        &lt;</span><br><span class="line">            KinematicParcel</span><br><span class="line">            &lt;</span><br><span class="line">                particle</span><br><span class="line">            &gt;</span><br><span class="line">        &gt;</span><br><span class="line">    &gt;</span><br><span class="line">&gt; coalParcel;</span><br></pre></td></tr></table></figure>
+
+<p>, which is also a template inheritance class. The inner most part is called <code>particle</code> which is a class defined in <code>particle.H</code>. </p>
+<p>Let’s go back to the <code>coalChemistyFoam</code>. In <code>coalChemistyFoam</code>, it includes a header called <code>createFields.H</code>, which includes <code>createClouds.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Info&lt;&lt; <span class="string">"\nConstructing coal cloud"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">coalCloud coalParcels</span><br><span class="line">(</span><br><span class="line">    <span class="string">"coalCloud1"</span>,</span><br><span class="line">    rho,</span><br><span class="line">    U,</span><br><span class="line">    g,</span><br><span class="line">    slgThermo</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">Info&lt;&lt; <span class="string">"\nConstructing limestone cloud"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">basicThermoCloud limestoneParcels</span><br><span class="line">(</span><br><span class="line">    <span class="string">"limestoneCloud1"</span>,</span><br><span class="line">    </span><br><span class="line">    rho,</span><br><span class="line">    U,</span><br><span class="line">    g,</span><br><span class="line">    slgThermo</span><br><span class="line">);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>In the header above, the <code>coalCloud</code> class is used by defining an object called <code>coalParcels</code>. This object will call the constructor of <code>ReactingMultiphaseCloud</code> (Remember here, it can only call the constructor of outer most class of the inherited template) in <code>ReactingMultiphaseCloud.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ReactingMultiphaseCloud</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp; cloudName,</span><br><span class="line">    <span class="keyword">const</span> volScalarField&amp; rho,</span><br><span class="line">    <span class="keyword">const</span> volVectorField&amp; U,</span><br><span class="line">    <span class="keyword">const</span> dimensionedVector&amp; g,</span><br><span class="line">    <span class="keyword">const</span> SLGThermo&amp; thermo,</span><br><span class="line">    <span class="keyword">bool</span> readFields = <span class="literal">true</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>and in <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v7/ReactingMultiphaseCloud_8C.html"><code>ReactingMultiphaseCloud.C</code></a>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:ReactingMultiphaseCloud&lt;CloudType&gt;::ReactingMultiphaseCloud</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp; cloudName,</span><br><span class="line">    <span class="keyword">const</span> volScalarField&amp; rho,</span><br><span class="line">    <span class="keyword">const</span> volVectorField&amp; U,</span><br><span class="line">    <span class="keyword">const</span> dimensionedVector&amp; g,</span><br><span class="line">    <span class="keyword">const</span> SLGThermo&amp; thermo,</span><br><span class="line">    <span class="keyword">bool</span> readFields</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    CloudType(cloudName, rho, U, g, thermo, <span class="literal">false</span>),</span><br><span class="line">    reactingMultiphaseCloud(),</span><br><span class="line">    cloudCopyPtr_(<span class="literal">nullptr</span>),</span><br><span class="line">    constProps_(<span class="keyword">this</span>-&gt;particleProperties()),</span><br><span class="line">    devolatilisationModel_(<span class="literal">nullptr</span>),</span><br><span class="line">    surfaceReactionModel_(<span class="literal">nullptr</span>),</span><br><span class="line">    dMassDevolatilisation_(<span class="number">0.0</span>),</span><br><span class="line">    dMassSurfaceReaction_(<span class="number">0.0</span>)</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;solution().active())</span><br><span class="line">    {</span><br><span class="line">        setModels();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (readFields)</span><br><span class="line">        {</span><br><span class="line">            parcelType::readFields(*<span class="keyword">this</span>, <span class="keyword">this</span>-&gt;composition());</span><br><span class="line">            <span class="keyword">this</span>-&gt;deleteLostParticles();</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;solution().resetSourcesOnStartup())</span><br><span class="line">    {</span><br><span class="line">        resetSourceTerms();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>In the constructor of the <code>ReactingMultiphaseCloud</code>, it will initialize the next constructor in one layer inner of the angle bracket. This is why OpenFOAM use this template inheritance method. The outer class can not only inherit the inner class functions but also its type. If you check each layer of the template, you will find out its relationship to each class layer.</p>
+<p>The <code>Devolatilisation</code> model object <code>devolatilisationModel_</code> is declared in <code>ReactingMultiphaseCloud.H</code> as a smart pointer (<code>autoPtr</code>):</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// References to the cloud sub-models</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">//- Devolatilisation model</span></span><br><span class="line">    autoPtr</span><br><span class="line">    &lt;</span><br><span class="line">        DevolatilisationModel&lt;ReactingMultiphaseCloud&lt;CloudType&gt;&gt;</span><br><span class="line">    &gt;</span><br><span class="line">    devolatilisationModel_;</span><br></pre></td></tr></table></figure>
+
+<p>One question remained here, which I didn’t figure out is why the <code>Devolatilization</code> class is forward declared:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">DevolatilisationModel</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>I would prefer to include the header file here instead of the forward declaration. In the constructor of the <code>ReactingMultiphaseCloud</code>, the <code>devolatilisationModel_</code> is initialized as a nullptr. In the constructor body, the function <code>setModels()</code> will be called. </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">Foam</span>:</span>:ReactingMultiphaseCloud&lt;CloudType&gt;::setModels()</span><br><span class="line">{</span><br><span class="line">    devolatilisationModel_.reset</span><br><span class="line">    (</span><br><span class="line">        DevolatilisationModel&lt;ReactingMultiphaseCloud&lt;CloudType&gt;&gt;::New</span><br><span class="line">        (</span><br><span class="line">            <span class="keyword">this</span>-&gt;subModelProperties(),</span><br><span class="line">            *<span class="keyword">this</span></span><br><span class="line">        ).ptr()</span><br><span class="line">    );</span><br><span class="line">    ...</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>In this function, the <code>devolatilizationModel_</code> , which is a smart pointer will be <code>reset</code>, (the <code>reset</code> is a function used in the shared pointer class, therefore it can be called using .) with a new pointer. The <code>DevolatilisationModel&lt;ReactingMultiphaseCloud&lt;CloudType&gt;&gt;::New</code> is defined in <code>DevolatilisationModelNew.C</code> :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:autoPtr&lt;Foam::DevolatilisationModel&lt;CloudType&gt;&gt;</span><br><span class="line">Foam::DevolatilisationModel&lt;CloudType&gt;::New</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    CloudType&amp; owner</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    <span class="function"><span class="keyword">const</span> word <span class="title">modelType</span><span class="params">(dict.lookup(<span class="string">"devolatilisationModel"</span>))</span></span>;</span><br><span class="line"></span><br><span class="line">    Info&lt;&lt; <span class="string">"Selecting devolatilisation model "</span> &lt;&lt; modelType &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">typename</span> dictionaryConstructorTable::iterator cstrIter =</span><br><span class="line">        dictionaryConstructorTablePtr_-&gt;find(modelType);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (cstrIter == dictionaryConstructorTablePtr_-&gt;end())</span><br><span class="line">    {</span><br><span class="line">        FatalErrorInFunction</span><br><span class="line">            &lt;&lt; <span class="string">"Unknown devolatilisation model type "</span></span><br><span class="line">            &lt;&lt; modelType &lt;&lt; nl &lt;&lt; nl</span><br><span class="line">            &lt;&lt; <span class="string">"Valid devolatilisation model types are:"</span> &lt;&lt; nl</span><br><span class="line">            &lt;&lt; dictionaryConstructorTablePtr_-&gt;sortedToc()</span><br><span class="line">            &lt;&lt; <span class="built_in">exit</span>(FatalError);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> autoPtr&lt;DevolatilisationModel&lt;CloudType&gt;&gt;(cstrIter()(dict, owner));</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>This kind of <code>New</code> function is very common in OpenFOAM, we have discussed about this in previous posts e.g. <a href="https://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/09/16/P1_model/">P1 Model</a>.  In below, we will study how the two parameters are implemented in this <code>New</code> fuction.</p>
+<p>The first input parameter in the <code>New</code> function is the <code>this-&gt;subModelProperties(),</code>. The <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1KinematicCloud.html#a0b8bf639c38ec2f96a0804cf604714c6"><code>subModelProperties()</code></a> is defined in <code>KinematicCloudI.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">const</span> <span class="title">Foam</span>:</span>:dictionary&amp;</span><br><span class="line">Foam::KinematicCloud&lt;CloudType&gt;::subModelProperties() <span class="keyword">const</span></span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> subModelProperties_;</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>The reason why the <code>subModelProperties()</code> can be called is because the <code>KinematicCloud</code> is a also inside the template inheritance bracket. Don’t forget that the <code>CloudType</code> here is the <code>ReactingCloud</code>, this can be found in the definition of the inherited template defined above. The <code>subModelProperties_</code> is defined in <code>KinematicCloud.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Sub-models dictionary</span></span><br><span class="line"><span class="keyword">const</span> dictionary subModelProperties_;</span><br></pre></td></tr></table></figure>
+
+<p>It should be noted here the <code>IOdictionary</code> is a subclass of the <code>dictionary</code> class. In the constructor of the <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1IOdictionary.html#a668d1ac4fd646613b3a8063bd830a724"><code>IOdictionary</code></a>, the <code>IOobjective</code> can be an input parameter:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Construct given an IOobject</span></span><br><span class="line">IOdictionary(<span class="keyword">const</span> IOobject&amp;);</span><br></pre></td></tr></table></figure>
+
+<p>In the constructor of <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1KinematicCloud.html"><code>KinematicCloud</code></a>, the <code>subModelProperties_</code> is initialized as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">subModelProperties_</span><br><span class="line">(</span><br><span class="line">    particleProperties_.subOrEmptyDict(<span class="string">"subModels"</span>, solution_.active())</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<p>Then we have to see how <code>particleProperties_</code> is initialized:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">particleProperties_</span><br><span class="line">(</span><br><span class="line">    IOobject</span><br><span class="line">    (</span><br><span class="line">        cloudName + <span class="string">"Properties"</span>,</span><br><span class="line">        rho.mesh().time().constant(),</span><br><span class="line">        rho.mesh(),</span><br><span class="line">        IOobject::MUST_READ_IF_MODIFIED,</span><br><span class="line">        IOobject::NO_WRITE</span><br><span class="line">    )</span><br><span class="line">),</span><br></pre></td></tr></table></figure>
+
+<p>The <code>particleProperties_</code> is defined in <code>KinematicCloud.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Dictionary of particle properties</span></span><br><span class="line">IOdictionary particleProperties_;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>cloudName</code> here is <code>coalCloud1</code> as we initialized the <code>coalParcels</code>. Therefore, this <code>particleProperties</code> will find the file <code>coalCloud1Properties</code> in the <code>constant</code> folder. The <code>subOrEmptyDict</code> is defined in <code>dictionary.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Find and return a sub-dictionary as a copy, or</span></span><br><span class="line"><span class="comment">//  return an empty dictionary if the sub-dictionary does not exist</span></span><br><span class="line">dictionary subOrEmptyDict</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> word&amp;,</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">bool</span> mustRead = <span class="literal">false</span></span><br><span class="line">) <span class="keyword">const</span>;</span><br></pre></td></tr></table></figure>
+
+<p>This <code>subOrEmptyDict</code> function will return the sub-directory, which is the <code>subModels</code> in this case, of the file  <code>coalCloud1Properties</code> in the <code>constant</code> folder.  </p>
+<p>Then we can go back to <code>DevolatilisationModel&lt;CloudType&gt;::New</code>, which has 2 input parameters with types of  <code>dictionary</code> and <code>CloudType</code>. It will first lookup the devolatilization model in the <code>subModels</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">const</span> word <span class="title">modelType</span><span class="params">(dict.lookup(<span class="string">"devolatilisationModel"</span>))</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>Then find this model in the prepared hash table (use the runtime selection mechanism):</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typename</span> dictionaryConstructorTable::iterator cstrIter =</span><br><span class="line">    dictionaryConstructorTablePtr_-&gt;find(modelType);</span><br></pre></td></tr></table></figure>
+
+<p>If the model is successfully found in the prepared hash table, this new function will return a pointer and the corresponding constructor of the devolatilization model will be called:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> autoPtr&lt;DevolatilisationModel&lt;CloudType&gt;&gt;(cstrIter()(dict, owner));</span><br></pre></td></tr></table></figure>
+
+<p>Here in the tutorial, the <code>devolatilization</code> model used is called <code>constantRateDevolatilisation</code>. Therefore the construcXDMDgxlf001!!tor of <code>constantRateDevolatilisation</code>, which is defined in <code>ConstantRateDevolatilisation.C</code> will be called:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:ConstantRateDevolatilisation&lt;CloudType&gt;::ConstantRateDevolatilisation</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    CloudType&amp; owner</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    DevolatilisationModel&lt;CloudType&gt;(dict, owner, typeName), <span class="comment">//typeName is constantRateDevolatilisation</span></span><br><span class="line">    volatileData_(<span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"volatileData"</span>)),</span><br><span class="line">    YVolatile0_(volatileData_.size()),</span><br><span class="line">    volatileToGasMap_(volatileData_.size()),</span><br><span class="line">    residualCoeff_(readScalar(<span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"residualCoeff"</span>)))</span><br><span class="line">{</span><br><span class="line">    <span class="keyword">if</span> (volatileData_.empty())</span><br><span class="line">    {</span><br><span class="line">        WarningInFunction</span><br><span class="line">            &lt;&lt; <span class="string">"Devolatilisation model selected, but no volatiles defined"</span></span><br><span class="line">            &lt;&lt; nl &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    {</span><br><span class="line">        Info&lt;&lt; <span class="string">"Participating volatile species:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Determine mapping between active volatiles and cloud gas components</span></span><br><span class="line">        <span class="keyword">const</span> label idGas = owner.composition().idGas();</span><br><span class="line">        <span class="keyword">const</span> scalar YGasTot = owner.composition().YMixture0()[idGas];</span><br><span class="line">        <span class="keyword">const</span> scalarField&amp; YGas = owner.composition().Y0(idGas);</span><br><span class="line">        forAll(volatileData_, i)</span><br><span class="line">        {</span><br><span class="line">            <span class="keyword">const</span> word&amp; specieName = volatileData_[i].first();</span><br><span class="line">            <span class="keyword">const</span> label id = owner.composition().localId(idGas, specieName);</span><br><span class="line">            volatileToGasMap_[i] = id;</span><br><span class="line">            YVolatile0_[i] = YGasTot*YGas[id];</span><br><span class="line"></span><br><span class="line">            Info&lt;&lt; <span class="string">"    "</span> &lt;&lt; specieName &lt;&lt; <span class="string">": particle mass fraction = "</span></span><br><span class="line">                &lt;&lt; YVolatile0_[i] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>Because the <code>ConstantRateDevolatilisation</code> class inherits the <code>DevolatilisationModel</code> class whose default constructor does not exist, this constructor needs to be initialized first. The constructor of the <code>DevolatilisationModel</code> is:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:DevolatilisationModel&lt;CloudType&gt;::DevolatilisationModel</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    CloudType&amp; owner,</span><br><span class="line">    <span class="keyword">const</span> word&amp; type <span class="comment">// type is constantRateDevolatilisation</span></span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    CloudSubModelBase&lt;CloudType&gt;(owner, dict, typeName, type), <span class="comment">// typeName is devolatilisationModel </span></span><br><span class="line">    dMass_(<span class="number">0.0</span>)</span><br><span class="line">{}</span><br></pre></td></tr></table></figure>
+
+<p>Because <code>DevolatilisationModel</code> inherits from the <code>CloudSubModelBase</code>, the constructor of the <code>CloudSubModelBase</code> needs to be initialized. Here the <code>typeName</code> is the <code>devolatilisationModel</code> as defined in <code>DevolatilisationModel.H</code>. The constructor of the <code>CloudSubModelBase</code> is:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Construct from owner cloud without name</span></span><br><span class="line">CloudSubModelBase</span><br><span class="line">(</span><br><span class="line">    CloudType&amp; owner,</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    <span class="keyword">const</span> word&amp; baseName,</span><br><span class="line">    <span class="keyword">const</span> word&amp; modelType,</span><br><span class="line">    <span class="keyword">const</span> word&amp; dictExt = <span class="string">"Coeffs"</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>and</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:CloudSubModelBase&lt;CloudType&gt;::CloudSubModelBase</span><br><span class="line">(</span><br><span class="line">    CloudType&amp; owner,</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    <span class="keyword">const</span> word&amp; baseName,</span><br><span class="line">    <span class="keyword">const</span> word&amp; modelType,</span><br><span class="line">    <span class="keyword">const</span> word&amp; dictExt</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    subModelBase</span><br><span class="line">    (</span><br><span class="line">        owner.outputProperties(),</span><br><span class="line">        dict,</span><br><span class="line">        baseName,</span><br><span class="line">        modelType,</span><br><span class="line">        dictExt</span><br><span class="line">    ),</span><br><span class="line">    owner_(owner)</span><br><span class="line">{}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>subModelBase</code> constructor:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Construct from components without name</span></span><br><span class="line">subModelBase</span><br><span class="line">(</span><br><span class="line">    dictionary&amp; properties,</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    <span class="keyword">const</span> word&amp; baseName,</span><br><span class="line">    <span class="keyword">const</span> word&amp; modelType,</span><br><span class="line">    <span class="keyword">const</span> word&amp; dictExt = <span class="string">"Coeffs"</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>and</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Foam::subModelBase::subModelBase</span><br><span class="line">(</span><br><span class="line">    dictionary&amp; properties,</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    <span class="keyword">const</span> word&amp; baseName,</span><br><span class="line">    <span class="keyword">const</span> word&amp; modelType,</span><br><span class="line">    <span class="keyword">const</span> word&amp; dictExt</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    modelName_(word::null),</span><br><span class="line">    properties_(properties),</span><br><span class="line">    dict_(dict),</span><br><span class="line">    baseName_(baseName),</span><br><span class="line">    modelType_(modelType),</span><br><span class="line">    coeffDict_(dict.subDict(modelType + dictExt))</span><br><span class="line">{}</span><br></pre></td></tr></table></figure>
+
+<p>Till here, all the constructor initialization is finished. All those initialization is due to the inheritance of each class to its parent class and in their parent class, there is not default constructor. If the default constructor of the parent class is not existed, it is necessary to initialize the parent class in the constructor. Then we will go to these four initializations:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">volatileData_(<span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"volatileData"</span>)),</span><br><span class="line">YVolatile0_(volatileData_.size()),</span><br><span class="line">volatileToGasMap_(volatileData_.size()),</span><br><span class="line">residualCoeff_(readScalar(<span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"residualCoeff"</span>)))</span><br></pre></td></tr></table></figure>
+
+<p>They are defined in <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1ConstantRateDevolatilisation.html"><code>ConstantRateDevolatilisation.H</code></a>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Model constants</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">//- List of volatile data - (name A0)</span></span><br><span class="line">    List&lt;Tuple2&lt;word, scalar&gt;&gt; volatileData_;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//- List of initial volatile mass fractions</span></span><br><span class="line">    List&lt;scalar&gt; YVolatile0_;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//- Mapping between local and cloud gaseous species</span></span><br><span class="line">    List&lt;label&gt; volatileToGasMap_;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//- Volatile residual coefficient (0-1)</span></span><br><span class="line">    <span class="comment">//  When the fraction of volatiles are depleted below this</span></span><br><span class="line">    <span class="comment">//  threshold, combustion can occur</span></span><br><span class="line">    <span class="keyword">const</span> scalar residualCoeff_;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><figcaption><span>can store two objects of different types, which is defined in ```Tuple2.H```. In the initialization of ```volatileData_```, the ```coeffDict()```, which is defined in ```subModelBase.C``` is called:</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```cpp</span><br><span class="line"> const Foam::dictionary&amp; Foam::subModelBase::coeffDict() const</span><br><span class="line"> {</span><br><span class="line">     return coeffDict_;</span><br><span class="line"> }</span><br></pre></td></tr></table></figure>
+
+<p>The <code>coeffDict_</code> defined in <code>subModelBase.H</code> has a type of <code>dictionary</code>. It is initialized in the constructor of <code>subModelBase</code>. The <code>dict</code> here is the <code>subModels</code> dictionary in the constant folder <code>coalCloud1Properties</code>.  The <code>modelType</code> (<code>type</code>) here is the <code>constantRateDevolatilisation</code>. The <code>modelType + dictExt</code> is <code>constantRateDevolatilisationCoeffs</code>. In the <code>simplifiedSiwek</code> tutorial, the <code>dict.subDict(modelType + dictExt)</code> will be:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    volatileData</span><br><span class="line">    (</span><br><span class="line">        (CH4            <span class="number">12</span>)</span><br><span class="line">        (H2             <span class="number">12</span>)</span><br><span class="line">        (CO2            <span class="number">12</span>)</span><br><span class="line">    );</span><br><span class="line">    residualCoeff   <span class="number">0.001</span>;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>this-&gt;coeffDict().lookup("volatileData")</code> will be:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(CH4            <span class="number">12</span>)</span><br><span class="line">(H2             <span class="number">12</span>)</span><br><span class="line">(CO2            <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+
+<p>, which are three tuples.  As <code>volatileData_</code> is a list, its <code>size</code> here will be 3. <code>YVolatile0_</code> and <code>volatileToGasMap_</code> are initialized by size. This can be found <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/List_8H_source.html#l00132">here</a>. The initialization of <code>residualCoeff_</code> is similar to that of <code>volatileData_</code>, it will not be discussed here again. Then we dig into how they are used:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> label idGas = owner.composition().idGas();</span><br><span class="line"><span class="keyword">const</span> scalar YGasTot = owner.composition().YMixture0()[idGas];</span><br><span class="line"><span class="keyword">const</span> scalarField&amp; YGas = owner.composition().Y0(idGas);</span><br></pre></td></tr></table></figure>
+
+<p>The <code>owner</code> here is the <code>*this</code> of the <code>ReactingMultiphaseCloud</code> class. The <code>composition()</code> function is defined in <code>ReactingCloud.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Return const access to reacting composition model</span></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">const</span> CompositionModel&lt;ReactingCloud&lt;CloudType&gt;&gt;&amp;</span><br><span class="line">    composition() <span class="keyword">const</span>;</span><br></pre></td></tr></table></figure>
+
+<p>and in <code>ReactingCloudI.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">const</span> <span class="title">Foam</span>:</span>:CompositionModel&lt;Foam::ReactingCloud&lt;CloudType&gt;&gt;&amp;</span><br><span class="line">Foam::ReactingCloud&lt;CloudType&gt;::composition() <span class="keyword">const</span></span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> compositionModel_;</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>compositionModel</code> is defined in <code>ReactingCloud.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- Reacting composition model</span></span><br><span class="line">autoPtr&lt;CompositionModel&lt;ReactingCloud&lt;CloudType&gt;&gt;&gt;</span><br><span class="line">    compositionModel_;</span><br></pre></td></tr></table></figure>
+
+<p>which is initialized in the constructor of <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1ReactingCloud.html"><code>ReactingCloud</code></a> as <code>compositionModel_(nullptr),</code> and then in the body of this constructor, it is reset by using function <code>setModels()</code>. This is quite similar to the <code>setModels()</code> we used in the constructor body of <code>ReactingMultiphaseCloud</code>, therefore it will not be read through again here. One interesting thing should be noted here is a conversion operator used in <code>autoPtr</code>. As the return type of the function <code>composition()</code> is <code>const Foam::CompositionModel&lt;Foam::ReactingCloud&lt;CloudType&gt;&gt;&amp;</code>, which is not a pointer. We dig into the class <code>autoPtr</code> and find out that it use the conversion operator:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">Foam</span>:</span>:autoPtr&lt;T&gt;::<span class="keyword">operator</span> <span class="keyword">const</span> T&amp;() <span class="keyword">const</span></span><br><span class="line">{</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">operator</span>()();</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>When the conversion operator is used, the conversion type should be mentioned after the “operator” sign as something like:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">operator</span> <span class="title">Type</span><span class="params">()</span></span>{}</span><br></pre></td></tr></table></figure>
+
+<p>The conversion operator is used to transform the type of the class to some other types. Read this more in C++ books.</p>
+<p>The <code>compositionModel</code> used in the <code>simplifiedSiwek</code> is called <code>singleMixtureFraction</code>. During the reset of the <code>compositionModel_</code> object, in the related <code>New</code> function, a pointer to the class <code>singleMixtureFraction</code> will be returned. The constructor of <code>singleMixtureFraction</code> is show as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:SingleMixtureFraction&lt;CloudType&gt;::SingleMixtureFraction</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    CloudType&amp; owner</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    CompositionModel&lt;CloudType&gt;(dict, owner, typeName),</span><br><span class="line"></span><br><span class="line">    idGas_(<span class="number">-1</span>),</span><br><span class="line">    idLiquid_(<span class="number">-1</span>),</span><br><span class="line">    idSolid_(<span class="number">-1</span>),</span><br><span class="line"></span><br><span class="line">    YMixture0_(<span class="number">3</span>)</span><br><span class="line">{</span><br><span class="line">    constructIds();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;phaseProps().size() != <span class="number">3</span>)</span><br><span class="line">    {</span><br><span class="line">        FatalErrorInFunction</span><br><span class="line">            &lt;&lt; <span class="string">"Incorrect number of phases: "</span> &lt;&lt; nl</span><br><span class="line">            &lt;&lt; <span class="string">"    Please specify 1 gas, 1 liquid and 1 solid"</span></span><br><span class="line">            &lt;&lt; <span class="built_in">exit</span>(FatalError);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"YGasTot0"</span>) &gt;&gt; YMixture0_[idGas_];</span><br><span class="line">    <span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"YLiquidTot0"</span>) &gt;&gt; YMixture0_[idLiquid_];</span><br><span class="line">    <span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"YSolidTot0"</span>) &gt;&gt; YMixture0_[idSolid_];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mag(sum(YMixture0_) - <span class="number">1.0</span>) &gt; small)</span><br><span class="line">    {</span><br><span class="line">        FatalErrorInFunction</span><br><span class="line">            &lt;&lt; <span class="string">"Sum of phases should be 1. Phase fractions:"</span> &lt;&lt; nl</span><br><span class="line">            &lt;&lt; YMixture0_ &lt;&lt; <span class="built_in">exit</span>(FatalError);</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The function <code>constuctIds()</code> is defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"> <span class="title">void</span> <span class="title">Foam</span>:</span>:SingleMixtureFraction&lt;CloudType&gt;::constructIds()</span><br><span class="line"> {</span><br><span class="line">     forAll(<span class="keyword">this</span>-&gt;phaseProps(), phaseI)</span><br><span class="line">     {</span><br><span class="line">         <span class="keyword">switch</span> (<span class="keyword">this</span>-&gt;phaseProps()[phaseI].phase())</span><br><span class="line">         {</span><br><span class="line">             <span class="keyword">case</span> phaseProperties::GAS:</span><br><span class="line">             {</span><br><span class="line">                 idGas_ = phaseI;</span><br><span class="line">                 <span class="keyword">break</span>;</span><br><span class="line">             }</span><br><span class="line">             <span class="keyword">case</span> phaseProperties::LIQUID:</span><br><span class="line">             {</span><br><span class="line">                 idLiquid_ = phaseI;</span><br><span class="line">                 <span class="keyword">break</span>;</span><br><span class="line">             }</span><br><span class="line">             <span class="keyword">case</span> phaseProperties::SOLID:</span><br><span class="line">             {</span><br><span class="line">                 idSolid_ = phaseI;</span><br><span class="line">                 <span class="keyword">break</span>;</span><br><span class="line">             }</span><br><span class="line">             <span class="keyword">default</span>:</span><br><span class="line">             {</span><br><span class="line">                 FatalErrorInFunction</span><br><span class="line">                     &lt;&lt; <span class="string">"Unknown phase enumeration"</span> &lt;&lt; nl &lt;&lt; <span class="built_in">abort</span>(FatalError);</span><br><span class="line">             }</span><br><span class="line">         }</span><br><span class="line">     }</span><br><span class="line">...</span><br><span class="line"> }</span><br></pre></td></tr></table></figure>
+
+<p>In the constructor of <code>CompositionModel</code>, the <code>phaseProps_</code> is initialized as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">phaseProps_</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">this</span>-&gt;coeffDict().lookup(<span class="string">"phases"</span>),</span><br><span class="line">    thermo_.carrier().species(),</span><br><span class="line">    thermo_.liquids().components(),</span><br><span class="line">    thermo_.solids().components()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>The <code>phaseProps_</code> is defined as a <code>phasePropertiesList</code> :</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- List of phase properties</span></span><br><span class="line">phasePropertiesList phaseProps_;</span><br></pre></td></tr></table></figure>
+
+<p>In the constructor of <code>phasePropertiesList</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Foam::phasePropertiesList::phasePropertiesList</span><br><span class="line">(</span><br><span class="line">    Istream&amp; is,</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; gasNames,</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; liquidNames,</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; solidNames</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    props_(is),</span><br><span class="line">    phaseTypeNames_(),</span><br><span class="line">    stateLabels_()</span><br><span class="line">{</span><br><span class="line">    forAll(props_, i)</span><br><span class="line">    {</span><br><span class="line">        props_[i].reorder(gasNames, liquidNames, solidNames);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    phaseTypeNames_.setSize(props_.size());</span><br><span class="line">    stateLabels_.setSize(props_.size());</span><br><span class="line">    forAll(props_, i)</span><br><span class="line">    {</span><br><span class="line">        phaseTypeNames_[i] = props_[i].phaseTypeName();</span><br><span class="line">        stateLabels_[i] = props_[i].stateLabel();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+<p>The <code>props_</code> is defined as a <code>List</code> object:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//- List of phase properties</span></span><br><span class="line">List&lt;phaseProperties&gt; props_;</span><br></pre></td></tr></table></figure>
+
+<p>This <code>List</code> will be initialized by the <code>Istream</code> object <code>is</code>. </p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Foam::phaseProperties::reorder</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; gasNames,</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; liquidNames,</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; solidNames</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    <span class="comment">// Determine the addressing to map between species listed in the phase</span></span><br><span class="line">    <span class="comment">// with those given in the (main) thermo properties</span></span><br><span class="line">    <span class="keyword">switch</span> (phase_)</span><br><span class="line">    {</span><br><span class="line">        <span class="keyword">case</span> GAS:</span><br><span class="line">        {</span><br><span class="line">            <span class="comment">// The list of gaseous species in the mixture may be a sub-set of</span></span><br><span class="line">            <span class="comment">// the gaseous species in the carrier phase</span></span><br><span class="line">            setCarrierIds(gasNames);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">case</span> LIQUID:</span><br><span class="line">        {</span><br><span class="line">            <span class="comment">// Set the list of liquid species to correspond to the complete list</span></span><br><span class="line">            <span class="comment">// defined in the thermodynamics package.</span></span><br><span class="line">            reorder(liquidNames);</span><br><span class="line">            <span class="comment">// Set the ids of the corresponding species in the carrier phase</span></span><br><span class="line">            setCarrierIds(gasNames);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">case</span> SOLID:</span><br><span class="line">        {</span><br><span class="line">            <span class="comment">// Set the list of solid species to correspond to the complete list</span></span><br><span class="line">            <span class="comment">// defined in the thermodynamics package.</span></span><br><span class="line">            reorder(solidNames);</span><br><span class="line">            <span class="comment">// Assume there is no correspondence between the solid species and</span></span><br><span class="line">            <span class="comment">// the species in the carrier phase (no sublimation).</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">        {</span><br><span class="line">            FatalErrorInFunction</span><br><span class="line">                &lt;&lt; <span class="string">"Invalid phase: "</span> &lt;&lt; phaseTypeNames[phase_] &lt;&lt; nl</span><br><span class="line">                &lt;&lt; <span class="string">"    phase must be gas, liquid or solid"</span> &lt;&lt; nl</span><br><span class="line">                &lt;&lt; <span class="built_in">exit</span>(FatalError);</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Foam::phaseProperties::setCarrierIds</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> wordList&amp; carrierNames</span><br><span class="line">)</span><br><span class="line">{</span><br><span class="line">    carrierIds_ = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">    forAll(names_, i)</span><br><span class="line">    {</span><br><span class="line">        forAll(carrierNames, j)</span><br><span class="line">        {</span><br><span class="line">            <span class="keyword">if</span> (carrierNames[j] == names_[i])</span><br><span class="line">            {</span><br><span class="line">                carrierIds_[i] = j;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (carrierIds_[i] == <span class="number">-1</span>)</span><br><span class="line">        {</span><br><span class="line">            FatalErrorInFunction</span><br><span class="line">                &lt;&lt; <span class="string">"Could not find carrier specie "</span> &lt;&lt; names_[i]</span><br><span class="line">                &lt;&lt; <span class="string">" in species list"</span> &lt;&lt;  nl</span><br><span class="line">                &lt;&lt; <span class="string">"Available species are: "</span> &lt;&lt; nl &lt;&lt; carrierNames &lt;&lt; nl</span><br><span class="line">                &lt;&lt; <span class="built_in">exit</span>(FatalError);</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">void</span> Foam::phaseProperties::reorder(<span class="keyword">const</span> wordList&amp; specieNames)</span><br><span class="line">{</span><br><span class="line">    <span class="comment">// ***HGW Unfortunately in the current implementation it is assumed that</span></span><br><span class="line">    <span class="comment">// if no species are specified the phase is not present and this MUST</span></span><br><span class="line">    <span class="comment">// be checked at the point of use.  This needs a rewrite.</span></span><br><span class="line">    <span class="keyword">if</span> (!names_.size())</span><br><span class="line">    {</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Store the current sames and mass-fractions</span></span><br><span class="line">    <span class="function">List&lt;word&gt; <span class="title">names0</span><span class="params">(names_)</span></span>;</span><br><span class="line">    <span class="function">scalarField <span class="title">Y0</span><span class="params">(Y_)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Update the specie names to those given</span></span><br><span class="line">    names_ = specieNames;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Re-size mass-fractions if necessary, initialize to 0</span></span><br><span class="line">    <span class="keyword">if</span> (names_.size() != names0.size())</span><br><span class="line">    {</span><br><span class="line">        Y_.setSize(names_.size());</span><br><span class="line">        Y_ = <span class="number">0</span>;</span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Set the mass-fraction for each specie in the list to the corresponding</span></span><br><span class="line">    <span class="comment">// value in the original list</span></span><br><span class="line">    forAll(names0, i)</span><br><span class="line">    {</span><br><span class="line">        <span class="keyword">bool</span> found = <span class="literal">false</span>;</span><br><span class="line">        forAll(names_, j)</span><br><span class="line">        {</span><br><span class="line">            <span class="keyword">if</span> (names_[j] == names0[i])</span><br><span class="line">            {</span><br><span class="line">                Y_[j] = Y0[i];</span><br><span class="line">                found = <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span> (!found)</span><br><span class="line">        {</span><br><span class="line">            FatalErrorInFunction</span><br><span class="line">                &lt;&lt; <span class="string">"Could not find specie "</span> &lt;&lt; names0[i]</span><br><span class="line">                &lt;&lt; <span class="string">" in list "</span> &lt;&lt;  names_</span><br><span class="line">                &lt;&lt; <span class="string">" for phase "</span> &lt;&lt; phaseTypeNames[phase_]</span><br><span class="line">                &lt;&lt; <span class="built_in">exit</span>(FatalError);</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/12/21/devolatilisation/" data-id="ckjzo9rbp000h7wu2h9g7ehxd" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/12/21/token/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          token class in OpenFOAM
+        
+      </div>
+    </a>
+  
+  
+    <a href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">A little discuss about fvMatrix fvMesh lduMatrix lduMesh in OpenFOAM</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" rel="tag">OpenFOAM command</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/Salome/" rel="tag">Salome</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" rel="tag">fvDOM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" rel="tag">paraFoam</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/boyaowang_OpenFOAM.github.io/tags/C/" style="font-size: 15px;">C++</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" style="font-size: 20px;">OpenFOAM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" style="font-size: 10px;">OpenFOAM command</a> <a href="/boyaowang_OpenFOAM.github.io/tags/Salome/" style="font-size: 10px;">Salome</a> <a href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" style="font-size: 10px;">fvDOM</a> <a href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" style="font-size: 10px;">paraFoam</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 Boyao Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/boyaowang_OpenFOAM.github.io/" class="mobile-nav-link">Home</a>
+  
+    <a href="/boyaowang_OpenFOAM.github.io/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.css">
+
+  
+<script src="/boyaowang_OpenFOAM.github.io/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/boyaowang_OpenFOAM.github.io/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

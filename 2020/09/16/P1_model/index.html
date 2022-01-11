@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://cpp.openfoam.org/v7/absorptionEmissionModel_8H__dep__incl.png">
 <meta property="og:image" content="https://cpp.openfoam.org/v7/P1_8C__incl.png">
 <meta property="article:published_time" content="2020-09-15T22:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-29T12:42:04.263Z">
+<meta property="article:modified_time" content="2021-01-07T10:37:37.567Z">
 <meta property="article:author" content="Boyao Wang">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="OpenFOAM">
@@ -262,7 +262,7 @@ mjx-container[display="true"] + br {
 <p>Here in the <a href="#radiationProperties"><code>radiationProperties</code></a> file, <code>const word modelType(dict.lookup("absorptionEmissionModel"));</code> will result in <code>binary</code>. Therefore, <code>return autoPtr&lt;absorptionEmissionModel&gt;(cstrIter()(dict, mesh));</code> will call the constructor of class <code>binary</code> in <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v7/binary_8C_source.html#l00052"><code>binary.C</code></a> as <code>binary</code> is a subclass of <code>absorptionEmissionModel</code>:<a name="model_1_2"></a></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Foam::radiationModels::absorptionEmissionModels::binary::binary</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> dictionary&amp; dict,</span><br><span class="line">    <span class="keyword">const</span> fvMesh&amp; mesh</span><br><span class="line">)</span><br><span class="line">:</span><br><span class="line">    absorptionEmissionModel(dict, mesh),</span><br><span class="line">    coeffsDict_(dict.optionalSubDict(typeName + <span class="string">"Coeffs"</span>)),</span><br><span class="line">    model1_</span><br><span class="line">    (</span><br><span class="line">        absorptionEmissionModel::New(coeffsDict_.subDict(<span class="string">"model1"</span>), mesh)</span><br><span class="line">    ),</span><br><span class="line">    model2_</span><br><span class="line">    (</span><br><span class="line">        absorptionEmissionModel::New(coeffsDict_.subDict(<span class="string">"model2"</span>), mesh)</span><br><span class="line">    )</span><br><span class="line">{}</span><br></pre></td></tr></table></figure>
 
-<p>Here the <code>absorptionEmissionModel::New</code> will be called again. The use of <code>subDict</code> and <code>optionalSubDict</code> has been explained <a href="https://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/09/14/hello-world/">here</a>. The <code>typeName </code> here is <code>binary</code>, which means <code>typeName + "Coeffs"</code> is <code>binaryCoeffs</code>.  Therefore, <code>coeffsDict_</code> will be:</p>
+<p>Here the <code>absorptionEmissionModel::New</code> will be called again. The use of <code>subDict</code> and <code>optionalSubDict</code> has been explained <a href="https://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/09/14/dictionary_OpenFOAM/">here</a>. The <code>typeName </code> here is <code>binary</code>, which means <code>typeName + "Coeffs"</code> is <code>binaryCoeffs</code>.  Therefore, <code>coeffsDict_</code> will be:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    model1</span><br><span class="line">    {</span><br><span class="line">        absorptionEmissionModel constant;</span><br><span class="line">        constantCoeffs</span><br><span class="line">        {</span><br><span class="line">            absorptivity    <span class="number">0.5</span>;</span><br><span class="line">            emissivity      <span class="number">0.5</span>;</span><br><span class="line">            E               <span class="number">0</span>;</span><br><span class="line">            boyao           zixin;</span><br><span class="line">            boyao1          gouzi;</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    model2</span><br><span class="line">    {</span><br><span class="line">        absorptionEmissionModel cloud;</span><br><span class="line">        cloudCoeffs</span><br><span class="line">        {</span><br><span class="line">            cloudNames</span><br><span class="line">            (</span><br><span class="line">                coalCloud1</span><br><span class="line">                limestoneCloud1</span><br><span class="line">            );</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 
 <p>So, <code>coeffsDict_.subDict("model1")</code> in this case will be a dictionary of:</p>
@@ -397,7 +397,7 @@ mjx-container[display="true"] + br {
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
     </div>
   </div>
 
@@ -410,23 +410,23 @@ mjx-container[display="true"] + br {
       <ul>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/">A littel discuss about fvMatrix fvMesh lduMatrix lduMesh in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/">fvm::laplacian in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/">fvScalarMatrix in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/">volMesh class in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/">fvm::ddtScheme in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/">(no title)</a>
           </li>
         
       </ul>
@@ -441,7 +441,7 @@ mjx-container[display="true"] + br {
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Boyao Wang<br>
+      &copy; 2022 Boyao Wang<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

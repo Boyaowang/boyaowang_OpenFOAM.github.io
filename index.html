@@ -181,10 +181,333 @@ mjx-container[display="true"] + br {
       <div class="outer">
         <section id="main">
   
-    <article id="post-fvMatrix" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-OpenFOAMDiary" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/" class="article-date">
-  <time datetime="2020-10-25T23:00:00.000Z" itemprop="datePublished">2020-10-26</time>
+    <a href="/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/" class="article-date">
+  <time datetime="2021-10-27T15:39:58.394Z" itemprop="datePublished">2021-10-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>write down something that I learn from OpenFOAM day by day</p>
+<p>Otb 27:</p>
+<p>RR is defined in <code>thermodynamicConstants.C</code> as:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">namespace</span> Foam</span><br><span class="line"> &#123;</span><br><span class="line"> <span class="keyword">namespace</span> constant</span><br><span class="line"> &#123;</span><br><span class="line"> <span class="keyword">namespace</span> thermodynamic</span><br><span class="line"> &#123;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //</span></span><br><span class="line"> </span><br><span class="line">     <span class="comment">// Note: the 1e3 converts from /mol to /kmol for consistency with the</span></span><br><span class="line">     <span class="comment">// SI choice of kg rather than g for mass.</span></span><br><span class="line">     <span class="comment">// This is not appropriate for USCS and will be changed to an entry in</span></span><br><span class="line">     <span class="comment">// the DimensionedConstants dictionary in etc/controlDict</span></span><br><span class="line">     <span class="keyword">const</span> scalar RR = <span class="number">1e3</span>*physicoChemical::R.value();</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"> &#125; <span class="comment">// End namespace thermodynamic</span></span><br><span class="line"> &#125; <span class="comment">// End namespace constant</span></span><br><span class="line"> &#125; <span class="comment">// End namespace Foam</span></span><br></pre></td></tr></table></figure>
+
+<p>R is defined in <code>physicoChemicalConstants.H</code> as:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> Foam</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">namespace</span> constant</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">namespace</span> physicoChemical</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">    <span class="comment">//- Universal gas constant: default SI units: [J/mol/K]</span></span><br><span class="line">    <span class="keyword">extern</span> <span class="keyword">const</span> dimensionedScalar R;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">&#125; <span class="comment">// End namespace physicoChemical</span></span><br><span class="line">&#125; <span class="comment">// End namespace constant</span></span><br><span class="line">&#125; <span class="comment">// End namespace Foam</span></span><br></pre></td></tr></table></figure>
+
+<p>If you want to use these two values, include <code>constants.H</code> and library<code>libOpenFOAM</code> when make the file. Test them use the following code:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Info &lt;&lt; <span class="string">&quot;RR is &quot;</span> &lt;&lt; Foam::constant::thermodynamic::RR &lt;&lt; nl;</span><br><span class="line">Info &lt;&lt; <span class="string">&quot;R is &quot;</span> &lt;&lt; Foam::constant::physicoChemical::R &lt;&lt; nl;</span><br></pre></td></tr></table></figure>
+
+<p>Remember here <code>RR</code> is a dimensionless scalar and <code>R</code> is a dimensioned scalar.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/" data-id="ckyamvjyf0001bm2qeg1ue27b" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-bashKnowledge" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/" class="article-date">
+  <time datetime="2021-06-02T15:29:28.759Z" itemprop="datePublished">2021-06-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>cd &quot;$&#123;0%/*&#125;&quot; || exit                                # Run from this directory</code></p>
+<p>This has been seen a lot in OpenFOAM running script. 0 means the first argument, <code>%</code> or <code>#</code> is the stripping operator for suffixes and prefixes respectively.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/" data-id="ckyamvjyi0004bm2q4ksi2092" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-updateParitcleMass" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/" class="article-date">
+  <time datetime="2021-02-01T14:11:05.493Z" itemprop="datePublished">2021-02-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>defined in <code>ReactingParcel.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">ParcelType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:scalar Foam::ReactingParcel&lt;ParcelType&gt;::updateMassFraction</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> scalar mass0,</span><br><span class="line">    <span class="keyword">const</span> scalarField&amp; dMass,</span><br><span class="line">    scalarField&amp; Y</span><br><span class="line">) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    scalar mass1 = mass0 - sum(dMass);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// only update the mass fractions if the new particle mass is finite</span></span><br><span class="line">    <span class="keyword">if</span> (mass1 &gt; rootVSmall)</span><br><span class="line">    &#123;</span><br><span class="line">        forAll(Y, i)</span><br><span class="line">        &#123;</span><br><span class="line">            Y[i] = (Y[i]*mass0 - dMass[i])/mass1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mass1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>which is called in <code>ReactingMultiphaseParcel.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">ParcelType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Foam</span>:</span>:scalar Foam::ReactingMultiphaseParcel&lt;ParcelType&gt;::updateMassFractions</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">const</span> scalar mass0,</span><br><span class="line">    <span class="keyword">const</span> scalarField&amp; dMassGas,</span><br><span class="line">    <span class="keyword">const</span> scalarField&amp; dMassLiquid,</span><br><span class="line">    <span class="keyword">const</span> scalarField&amp; dMassSolid</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    scalarField&amp; YMix = <span class="keyword">this</span>-&gt;Y_;</span><br><span class="line"></span><br><span class="line">    scalar massGas =</span><br><span class="line">        <span class="keyword">this</span>-&gt;updateMassFraction(mass0*YMix[GAS], dMassGas, YGas_);</span><br><span class="line">    scalar massLiquid =</span><br><span class="line">        <span class="keyword">this</span>-&gt;updateMassFraction(mass0*YMix[LIQ], dMassLiquid, YLiquid_);</span><br><span class="line">    scalar massSolid =</span><br><span class="line">        <span class="keyword">this</span>-&gt;updateMassFraction(mass0*YMix[SLD], dMassSolid, YSolid_);</span><br><span class="line"></span><br><span class="line">    scalar massNew = max(massGas + massLiquid + massSolid, rootVSmall);</span><br><span class="line"></span><br><span class="line">    YMix[GAS] = massGas/massNew;</span><br><span class="line">    YMix[LIQ] = massLiquid/massNew;</span><br><span class="line">    YMix[SLD] = <span class="number">1.0</span> - YMix[GAS] - YMix[LIQ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> massNew;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>the <code>updateMassFractions</code> is called as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">scalarField <span class="title">dMassGas</span><span class="params">(dMassDV + dMassSRGas)</span></span>;</span><br><span class="line"><span class="function">scalarField <span class="title">dMassLiquid</span><span class="params">(dMassPC + dMassSRLiquid)</span></span>;</span><br><span class="line"><span class="function">scalarField <span class="title">dMassSolid</span><span class="params">(dMassSRSolid)</span></span>;</span><br><span class="line">scalar mass1 =</span><br><span class="line">    updateMassFractions(mass0, dMassGas, dMassLiquid, dMassSolid);</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/" data-id="ckyamvjyt0008bm2q1mlm2cvf" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-readAndWriteFields" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/" class="article-date">
+  <time datetime="2021-01-31T20:17:59.728Z" itemprop="datePublished">2021-01-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>All these <code>readFields</code> and <code>writeFields</code> functions are written in the <code>classIO.C</code> files. Those files are highly depending on the inheritance of the templates.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/" data-id="ckyamvjyq0006bm2q0b6m5zvh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-calcFunction" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/" class="article-date">
+  <time datetime="2021-01-28T17:48:27.986Z" itemprop="datePublished">2021-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>The <code>calc</code> function called in <code>ReactingMultiPhaseParcel.C</code>:</p>
+<p>For example, if we have a <code>coalCloud</code> object defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">coalCloud coalParcels</span><br><span class="line">(</span><br><span class="line">    <span class="string">&quot;coalCloud1&quot;</span>,</span><br><span class="line">    rho,</span><br><span class="line">    U,</span><br><span class="line">    g,</span><br><span class="line">    slgThermo</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>If we call <code>coalParcels.evolve()</code>, we will call function <code>evolve()</code> defined in <code>ReactingMultiphaseCloud.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">Foam</span>:</span>:ReactingMultiphaseCloud&lt;CloudType&gt;::evolve()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;solution().canEvolve())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">typename</span> parcelType::trackingData <span class="title">td</span><span class="params">(*<span class="keyword">this</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>-&gt;solve(*<span class="keyword">this</span>, td);<span class="comment">// here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This will call the solve function defined in in <code>KinematicCloud.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">template</span>&lt;class TrackCloudType&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">Foam</span>:</span>:KinematicCloud&lt;CloudType&gt;::solve</span><br><span class="line">(</span><br><span class="line">    TrackCloudType&amp; cloud,</span><br><span class="line">    <span class="keyword">typename</span> parcelType::trackingData&amp; td</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (solution_.steadyState())</span><br><span class="line">    &#123;</span><br><span class="line">        cloud.storeState();</span><br><span class="line"></span><br><span class="line">        cloud.preEvolve();</span><br><span class="line"></span><br><span class="line">        evolveCloud(cloud, td);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (solution_.coupled())</span><br><span class="line">        &#123;</span><br><span class="line">            cloud.relaxSources(cloud.cloudCopy());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        cloud.preEvolve();</span><br><span class="line"></span><br><span class="line">        evolveCloud(cloud, td);<span class="comment">// here</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (solution_.coupled())</span><br><span class="line">        &#123;</span><br><span class="line">            cloud.scaleSources();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cloud.info();</span><br><span class="line"></span><br><span class="line">    cloud.postEvolve();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (solution_.steadyState())</span><br><span class="line">    &#123;</span><br><span class="line">        cloud.restoreState();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this function, the <code>evolveCloud</code> function (still defined in <code>KinematicCloud.C</code> as other class inherit from this class has no such function) will be called:  </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">template</span>&lt;class TrackCloudType&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">Foam</span>:</span>:KinematicCloud&lt;CloudType&gt;::evolveCloud</span><br><span class="line">(</span><br><span class="line">    TrackCloudType&amp; cloud,</span><br><span class="line">    <span class="keyword">typename</span> parcelType::trackingData&amp; td</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (solution_.coupled())</span><br><span class="line">    &#123;</span><br><span class="line">        cloud.resetSourceTerms();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (solution_.transient())</span><br><span class="line">    &#123;</span><br><span class="line">        label preInjectionSize = <span class="keyword">this</span>-&gt;size();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>-&gt;surfaceFilm().inject(cloud);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Update the cellOccupancy if the size of the cloud has changed</span></span><br><span class="line">        <span class="comment">// during the injection.</span></span><br><span class="line">        <span class="keyword">if</span> (preInjectionSize != <span class="keyword">this</span>-&gt;size())</span><br><span class="line">        &#123;</span><br><span class="line">            updateCellOccupancy();</span><br><span class="line">            preInjectionSize = <span class="keyword">this</span>-&gt;size();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        injectors_.inject(cloud, td);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Assume that motion will update the cellOccupancy as necessary</span></span><br><span class="line">        <span class="comment">// before it is required.</span></span><br><span class="line">        cloud.motion(cloud, td);<span class="comment">// here</span></span><br><span class="line"></span><br><span class="line">        stochasticCollision().update(td, solution_.trackTime());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line"><span class="comment">//        this-&gt;surfaceFilm().injectSteadyState(cloud);</span></span><br><span class="line"></span><br><span class="line">        injectors_.injectSteadyState(cloud, td, solution_.trackTime());</span><br><span class="line"></span><br><span class="line">        td.part() = parcelType::trackingData::tpLinearTrack;</span><br><span class="line">        CloudType::move(cloud, td, solution_.trackTime()); <span class="comment">// or here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Here the <code>cloud</code> object will call the function <code>motion</code> which also defined in <code>KinematicCloud.C</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">CloudType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">template</span>&lt;class TrackCloudType&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">Foam</span>:</span>:KinematicCloud&lt;CloudType&gt;::motion</span><br><span class="line">(</span><br><span class="line">    TrackCloudType&amp; cloud,</span><br><span class="line">    <span class="keyword">typename</span> parcelType::trackingData&amp; td</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    td.part() = parcelType::trackingData::tpLinearTrack;</span><br><span class="line">    CloudType::move(cloud, td, solution_.trackTime());<span class="comment">// here</span></span><br><span class="line"></span><br><span class="line">    updateCellOccupancy();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In this motion function, the <code>move</code> function defined in <code>KinematicParcel.C</code>will be called:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">ParcelType</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">template</span>&lt;class TrackCloudType&gt;</span></span><br><span class="line"><span class="class"><span class="title">bool</span> <span class="title">Foam</span>:</span>:KinematicParcel&lt;ParcelType&gt;::move</span><br><span class="line">(</span><br><span class="line">    TrackCloudType&amp; cloud,</span><br><span class="line">    trackingData&amp; td,</span><br><span class="line">    <span class="keyword">const</span> scalar trackTime</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">typename</span> TrackCloudType::parcelType&amp; p =</span><br><span class="line">        <span class="keyword">static_cast</span>&lt;<span class="keyword">typename</span> TrackCloudType::parcelType&amp;&gt;(*<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">typename</span> TrackCloudType::parcelType::trackingData&amp; ttd =</span><br><span class="line">        <span class="keyword">static_cast</span>&lt;<span class="keyword">typename</span> TrackCloudType::parcelType::trackingData&amp;&gt;(td);</span><br><span class="line"></span><br><span class="line">    ttd.switchProcessor = <span class="literal">false</span>;</span><br><span class="line">    ttd.keepParticle = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> scalarField&amp; cellLengthScale = cloud.cellLengthScale();</span><br><span class="line">    <span class="keyword">const</span> scalar maxCo = cloud.solution().maxCo();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (ttd.keepParticle &amp;&amp; !ttd.switchProcessor &amp;&amp; p.stepFraction() &lt; <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Cache the current position, cell and step-fraction</span></span><br><span class="line">        <span class="keyword">const</span> point start = p.position();</span><br><span class="line">        <span class="keyword">const</span> scalar sfrac = p.stepFraction();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Total displacement over the time-step</span></span><br><span class="line">        <span class="keyword">const</span> <span class="built_in">vector</span> s = trackTime*U_;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Cell length scale</span></span><br><span class="line">        <span class="keyword">const</span> scalar l = cellLengthScale[p.cell()];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Deviation from the mesh centre for reduced-D cases</span></span><br><span class="line">        <span class="keyword">const</span> <span class="built_in">vector</span> d = p.deviationFromMeshCentre();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Fraction of the displacement to track in this loop. This is limited</span></span><br><span class="line">        <span class="comment">// to ensure that the both the time and distance tracked is less than</span></span><br><span class="line">        <span class="comment">// maxCo times the total value.</span></span><br><span class="line">        scalar f = <span class="number">1</span> - p.stepFraction();</span><br><span class="line">        f = min(f, maxCo);</span><br><span class="line">        f = min(f, maxCo*l/max(small*l, mag(s)));</span><br><span class="line">        <span class="keyword">if</span> (p.active())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// Track to the next face</span></span><br><span class="line">            p.trackToFace(f*s - d, f);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// At present the only thing that sets active_ to false is a stick</span></span><br><span class="line">            <span class="comment">// wall interaction. We want the position of the particle to remain</span></span><br><span class="line">            <span class="comment">// the same relative to the face that it is on. The local</span></span><br><span class="line">            <span class="comment">// coordinates therefore do not change. We still advance in time and</span></span><br><span class="line">            <span class="comment">// perform the relevant interactions with the fixed particle.</span></span><br><span class="line">            p.stepFraction() += f;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> scalar dt = (p.stepFraction() - sfrac)*trackTime;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Avoid problems with extremely small timesteps</span></span><br><span class="line">        <span class="keyword">if</span> (dt &gt; rootVSmall)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// Update cell based properties</span></span><br><span class="line">            p.setCellValues(cloud, ttd);</span><br><span class="line"></span><br><span class="line">            p.calcDispersion(cloud, ttd, dt);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (cloud.solution().cellValueSourceCorrection())</span><br><span class="line">            &#123;</span><br><span class="line">                p.cellValueSourceCorrection(cloud, ttd, dt);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            p.calc(cloud, ttd, dt);<span class="comment">//here!!!!!</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        p.age() += dt;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (p.onFace())</span><br><span class="line">        &#123;</span><br><span class="line">            cloud.functions().postFace(p, ttd.keepParticle);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        cloud.functions().postMove(p, dt, start, ttd.keepParticle);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (p.onFace() &amp;&amp; ttd.keepParticle)</span><br><span class="line">        &#123;</span><br><span class="line">            p.hitFace(s, cloud, ttd);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ttd.keepParticle;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The <code>p.calc(cloud, ttd, dt)</code> will then call the <code>calc</code> function defined in the <code>ReactingMultiphaseParcel.C</code>. There, e.g. <code>calcDevolatilisation</code> will be called to update the model.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/" data-id="ckyamvjyk0005bm2qbg69cbbk" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-tracking" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/tracking/" class="article-date">
+  <time datetime="2021-01-28T15:20:17.298Z" itemprop="datePublished">2021-01-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">typename</span> CloudType::particleType parcelType;</span><br></pre></td></tr></table></figure>
+
+<p>In <code>Cloud.H</code>:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> ParticleType particleType;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">typename</span> ParcelType::trackingData trackingData;</span><br></pre></td></tr></table></figure>
+
+<p>In <code>particle.H</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">trackingData</span></span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/28/tracking/" data-id="ckyamvjys0007bm2q919ug1il" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-A cheating list" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/23/A%20cheating%20list/" class="article-date">
+  <time datetime="2021-01-23T21:47:00.226Z" itemprop="datePublished">2021-01-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="For"><a href="#For" class="headerlink" title="For"></a>For</h2><table>
+<thead>
+<tr>
+<th>Codes</th>
+<th>Results</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/mesh_2conversion_2foamToStarMesh_2getTimeIndex_8H.html#a2f677c654c2b7f157710d334624b8800"><code>mesh.time().timeName()</code></a>, runTime.timeName()</td>
+<td>returns the current time name</td>
+</tr>
+<tr>
+<td><code>mesh.polyMesh::instance()</code></td>
+<td>returns the starting time</td>
+</tr>
+<tr>
+<td><code>runTime.write()</code></td>
+<td>write the time folder</td>
+</tr>
+<tr>
+<td><code>runTime.constant()</code></td>
+<td>returns constant</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="Tips-for-certain-fundamental-class"><a href="#Tips-for-certain-fundamental-class" class="headerlink" title="Tips for certain fundamental class"></a>Tips for certain fundamental class</h2><ol>
+<li><code>autoPtr&lt;Type&gt;</code> has conversion operator to convert the pointer to a reference object</li>
+<li><code>List&lt;Type&gt;</code> can take <code>Istream</code> object and build a list</li>
+</ol>
+<h2 id="Create-certain-objects-for-input-and-output"><a href="#Create-certain-objects-for-input-and-output" class="headerlink" title="Create certain objects for input and output"></a>Create certain objects for input and output</h2><p>Create an object from <code>transportProperties</code> in <code>constant</code> folder:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">IOdictionary objectName</span><br><span class="line">(</span><br><span class="line">    IOobject</span><br><span class="line">    (</span><br><span class="line">        <span class="string">&quot;transportProperties&quot;</span>, <span class="comment">// file name</span></span><br><span class="line">        runTime.constant(), <span class="comment">// folder name</span></span><br><span class="line">        mesh,</span><br><span class="line">        IOobject::MUST_READ_IF_MODIFIED,</span><br><span class="line">        IOobject::NO_WRITE</span><br><span class="line">    )</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>Read options:</p>
+<p>Define what is done on object construction and explicit reads:</p>
+<ul>
+<li><p><strong>MUST_READ</strong></p>
+<p>Object must be read from <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> on construction. Error if <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> does not exist or can’t be read. Does not check timestamp or re-read.</p>
+</li>
+<li><p><strong>MUST_READ_IF_MODIFIED</strong></p>
+<p>Object must be read from <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> on construction. Error if <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> does not exist or can’t be read. If object is registered its timestamp will be checked every timestep and possibly re-read.</p>
+</li>
+<li><p><strong>READ_IF_PRESENT</strong></p>
+<p>Read object from <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> if <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> exists, otherwise don’t. Error only if <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1Istream.html">Istream</a> exists but can’t be read. Does not check timestamp or re-read.</p>
+</li>
+<li><p><strong>NO_READ</strong></p>
+<p>Don’t read</p>
+</li>
+</ul>
+<p>Write options:</p>
+<p>Define what is done on object destruction and explicit writes:</p>
+<ul>
+<li><p><strong>AUTO_WRITE</strong></p>
+<p>Object is written automatically when requested to by the <a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/classFoam_1_1objectRegistry.html">objectRegistry</a>.</p>
+</li>
+<li><p><strong>NO_WRITE</strong></p>
+<p>No automatic write on destruction but can be written explicitly</p>
+</li>
+</ul>
+<h2 id="Go-through-a-table-for-run-time-selection"><a href="#Go-through-a-table-for-run-time-selection" class="headerlink" title="Go through a table for run time selection"></a>Go through a table for run time selection</h2><p>An example for a table defined in the <code>psiReactionThermo</code> class.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> it = psiReactionThermo::fvMeshConstructorTablePtr_-&gt;begin() ;</span><br><span class="line">          it != psiReactionThermo::fvMeshConstructorTablePtr_-&gt;end(); it++) &#123;</span><br><span class="line">  Info &lt;&lt; it.key() &lt;&lt; nl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The table itself is defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">addToRunTimeSelectionTable                                                 </span><br><span class="line">     (                                                                         </span><br><span class="line">         fluidThermo,                                                         </span><br><span class="line">         CThermoMixtureThermoPhys,                                             </span><br><span class="line">         fvMesh                                                               </span><br><span class="line">     )</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Data-structures"><a href="#Data-structures" class="headerlink" title="Data structures"></a>Data structures</h2><h3 id="Pointers"><a href="#Pointers" class="headerlink" title="Pointers"></a>Pointers</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> forAllIter(Container,container,iter)                                   \</span></span><br><span class="line">    <span class="keyword">for</span>                                                                        \</span><br><span class="line">    (                                                                          \</span><br><span class="line">        Container::iterator iter = (container).begin();                        \</span><br><span class="line">        iter != (container).end();                                             \</span><br><span class="line">        ++iter                                                                 \</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> forAllConstIter(Container,container,iter)                              \</span></span><br><span class="line">    <span class="keyword">for</span>                                                                        \</span><br><span class="line">    (                                                                          \</span><br><span class="line">        Container::const_iterator iter = (container).begin();                  \</span><br><span class="line">        iter != (container).end();                                             \</span><br><span class="line">        ++iter                                                                 \</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+
+
+<p>To obtain the values that is saved in the chosen file:</p>
+<p><code>foamDictionary -entry transportModel -value constant/transportProperties</code> </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/23/A%20cheating%20list/" data-id="ckjzo9rb100007wu2gf4zeluu" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-makeReactionThermos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/15/makeReactionThermos/" class="article-date">
+  <time datetime="2021-01-14T23:00:00.000Z" itemprop="datePublished">2021-01-15</time>
 </a>
     
   </div>
@@ -195,7 +518,7 @@ mjx-container[display="true"] + br {
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/">A littel discuss about fvMatrix fvMesh lduMatrix lduMesh in OpenFOAM</a>
+      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2021/01/15/makeReactionThermos/">makeReactionThermos in OpenFOAM</a>
     </h1>
   
 
@@ -203,16 +526,16 @@ mjx-container[display="true"] + br {
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p> A littel discuss about fvMatrix fvMesh lduMatrix lduMesh in OpenFOAM</p>
+        <p><a target="_blank" rel="noopener" href="https://cpp.openfoam.org/v6/namespaceFoam.html#a3afc3116262f2306ba048cbf9a403b5d"><code>makeReactionThermos</code></a> in OpenFOAM</p>
         
           <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/#more">Read More</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/15/makeReactionThermos/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/" data-id="ckgr14vhj00013uu2dpxa09io" class="article-share-link">Share</a>
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/15/makeReactionThermos/" data-id="ckjzo9rbb00047wu2ecdmb3ja" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
@@ -224,10 +547,10 @@ mjx-container[display="true"] + br {
 
 
   
-    <article id="post-laplacian" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-BuildAList" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/" class="article-date">
-  <time datetime="2020-10-24T22:00:00.000Z" itemprop="datePublished">2020-10-25</time>
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/15/BuildAList/" class="article-date">
+  <time datetime="2021-01-14T23:00:00.000Z" itemprop="datePublished">2021-01-15</time>
 </a>
     
   </div>
@@ -238,7 +561,7 @@ mjx-container[display="true"] + br {
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/">fvm::laplacian in OpenFOAM</a>
+      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2021/01/15/BuildAList/">Test a self-build function in OpenFOAM</a>
     </h1>
   
 
@@ -246,16 +569,16 @@ mjx-container[display="true"] + br {
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>fvm::laplacian in OpenFOAM</p>
+        <p>In OpenFOAM, user defined function is easy to build</p>
         
           <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/#more">Read More</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/15/BuildAList/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/" data-id="ckgr14vho00053uu2bi0g2fhk" class="article-share-link">Share</a>
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/15/BuildAList/" data-id="ckyamvjyd0000bm2qf354d1nx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
@@ -267,10 +590,10 @@ mjx-container[display="true"] + br {
 
 
   
-    <article id="post-fvScalarMatrix" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-NamedEnum_and_hashTable" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/" class="article-date">
-  <time datetime="2020-10-24T22:00:00.000Z" itemprop="datePublished">2020-10-25</time>
+    <a href="/boyaowang_OpenFOAM.github.io/2021/01/11/NamedEnum_and_hashTable/" class="article-date">
+  <time datetime="2021-01-10T23:00:00.000Z" itemprop="datePublished">2021-01-11</time>
 </a>
     
   </div>
@@ -281,7 +604,7 @@ mjx-container[display="true"] + br {
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/">fvScalarMatrix in OpenFOAM</a>
+      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2021/01/11/NamedEnum_and_hashTable/">NamedEnum and HashTable</a>
     </h1>
   
 
@@ -289,320 +612,19 @@ mjx-container[display="true"] + br {
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>What is the fvScalarMatrix.</p>
+        <p>NamedEnum and its relation to HashTable</p>
         
           <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/#more">Read More</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/11/NamedEnum_and_hashTable/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/" data-id="ckgr14vhm00033uu25inca6ez" class="article-share-link">Share</a>
+      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2021/01/11/NamedEnum_and_hashTable/" data-id="ckjzo9rb700017wu2hyua002j" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-volMesh" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/" class="article-date">
-  <time datetime="2020-10-22T22:00:00.000Z" itemprop="datePublished">2020-10-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/">volMesh class in OpenFOAM</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>volMesh class in OpenFOAM</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/" data-id="ckgr14vhs00083uu26iwl2y2i" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-ddtScheme" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/" class="article-date">
-  <time datetime="2020-10-22T22:00:00.000Z" itemprop="datePublished">2020-10-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/">fvm::ddtScheme in OpenFOAM</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>fvm::ddt in OpenFOAM</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/" data-id="ckgr14vha00003uu2c0zn1eel" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-solverperformance" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/" class="article-date">
-  <time datetime="2020-10-22T22:00:00.000Z" itemprop="datePublished">2020-10-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/">sloverPerformance in OpenFOAM</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>How solverPerformance work in OpenFOAM</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/23/solverperformance/" data-id="ckgo7am6400005hu2hhlh19oq" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-foamNew" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/" class="article-date">
-  <time datetime="2020-10-21T22:00:00.000Z" itemprop="datePublished">2020-10-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/">foamNew command</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>foamNew (or foamNewSource) command in OpenFOAM</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/22/foamNew/" data-id="ckgkq3kft0001ftu24hkafzyt" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM-command/" rel="tag">OpenFOAM command</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Salome-problems" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/" class="article-date">
-  <time datetime="2020-10-18T22:00:00.000Z" itemprop="datePublished">2020-10-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/">Salome problems</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Some packages required in Salome</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/19/Salome-problems/" data-id="ckgkq3kfo0000ftu22rxf3lls" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/Salome/" rel="tag">Salome</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-paraFOAM_compile" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/" class="article-date">
-  <time datetime="2020-10-18T22:00:00.000Z" itemprop="datePublished">2020-10-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/">paraFoam compilation</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Hint on paraFoam compile from Third-party folder in OpenFOAM-7 on Ubuntu 20.04</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/10/19/paraFOAM_compile/" data-id="ckgkq3kfy0003ftu2f3vc60a9" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/paraFoam/" rel="tag">paraFoam</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fvdom" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/" class="article-date">
-  <time datetime="2020-09-29T22:00:00.000Z" itemprop="datePublished">2020-09-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/">fvDOM Model</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>To understand the how <code>fvDOM</code> model is used and implemented</p>
-        
-          <p class="article-more-link">
-            <a href="/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://boyaowang.github.io/boyaowang_OpenFOAM.github.io/2020/09/30/fvdom/" data-id="ckfpq95sp000gqqu21a4289o9" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/OpenFOAM/" rel="tag">OpenFOAM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/boyaowang_OpenFOAM.github.io/tags/fvDOM/" rel="tag">fvDOM</a></li></ul>
 
     </footer>
   </div>
@@ -615,7 +637,7 @@ mjx-container[display="true"] + br {
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/boyaowang_OpenFOAM.github.io/page/2/">2</a><a class="extend next" rel="next" href="/boyaowang_OpenFOAM.github.io/page/2/">Next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/boyaowang_OpenFOAM.github.io/page/2/">2</a><a class="page-number" href="/boyaowang_OpenFOAM.github.io/page/3/">3</a><a class="extend next" rel="next" href="/boyaowang_OpenFOAM.github.io/page/2/">Next &amp;raquo;</a>
   </nav>
 
 </section>
@@ -648,7 +670,7 @@ mjx-container[display="true"] + br {
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/06/">June 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/boyaowang_OpenFOAM.github.io/archives/2020/09/">September 2020</a></li></ul>
     </div>
   </div>
 
@@ -661,23 +683,23 @@ mjx-container[display="true"] + br {
       <ul>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/26/fvMatrix/">A littel discuss about fvMatrix fvMesh lduMatrix lduMesh in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/10/27/OpenFOAMDiary/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/laplacian/">fvm::laplacian in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/06/02/bashKnowledge/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/25/fvScalarMatrix/">fvScalarMatrix in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/02/01/updateParitcleMass/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/volMesh/">volMesh class in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/31/readAndWriteFields/">(no title)</a>
           </li>
         
           <li>
-            <a href="/boyaowang_OpenFOAM.github.io/2020/10/23/ddtScheme/">fvm::ddtScheme in OpenFOAM</a>
+            <a href="/boyaowang_OpenFOAM.github.io/2021/01/28/calcFunction/">(no title)</a>
           </li>
         
       </ul>
@@ -692,7 +714,7 @@ mjx-container[display="true"] + br {
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Boyao Wang<br>
+      &copy; 2022 Boyao Wang<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
